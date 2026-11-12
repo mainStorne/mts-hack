@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="ru" class="h-full [scrollbar-width:none]" data-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Support Agent</title>
+    <meta
+      name="description"
+      content="Chat with the customer support agent of your telecom operator"
+    />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <meta name="theme-color" content="#4f6bed" />
+
+    <!-- Theme changer script. Run before loading any resources -->
+    <script type="text/javascript">
+      const stored = localStorage.getItem("theme-v2");
+      const dark =
+        stored === '"dark"' ||
+        (stored !== '"light"' &&
+          window.matchMedia("(prefers-color-scheme: dark)").matches);
+      document.documentElement.dataset.theme = dark ? "dark" : "light";
+    </script>
+
+    <!-- The app entrypoint -->
+    <script
+      type="module"
+      crossorigin="anonymous"
+      src="/src/app/entry-client.tsx"
+    ></script>
+  </head>
+
+  <body class="h-full">
+    <!-- Notice in case of disabled JavaScript -->
+    <noscript
+      class="bg-error text-error-content flex w-full justify-center p-8 font-medium"
+    >
+      You need to enable JavaScript to run this app.
+    </noscript>
+
+    <!-- Main app container -->
+    <div id="app" class="h-full">
+      <!-- Show loading state. App will replace this after rendering -->
+      <div class="flex h-full w-full items-center justify-center">
+        <span class="loading loading-spinner loading-xl"></span>
+      </div>
+    </div>
+  </body>
+</html>

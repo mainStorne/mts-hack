@@ -1,0 +1,55 @@
+# Development: Postgres (the chats and the agent's memory) and the trace viewer. The API runs on the host (uv run support-api)
+# or in Docker: `docker compose --profile api up -d --build`.
+# Start:  docker compose up -d      Stop:  docker compose down  (data stays in the volumes)
+name: support
+
+services:
+  db:
+    # ParadeDB: Postgres 17 with pgvector and pg_search (BM25), ready for a knowledge-base search; the template itself needs plain Postgres.
+    image: paradedb/paradedb:0.26.1-pg17 # pinned: the index syntax changed between ParadeDB versions
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: support
+      POSTGRES_DB: support
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
+    ports:
+      - "127.0.0.1:5432:5432" # local only
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    shm_size: 256mb
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U support -d support"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  # Trace viewer: one container, its data in a SQLite file in the volume. UI and OTLP over HTTP on 6006 (/v1/traces).
+  phoenix:
+    image: arizephoenix/phoenix:version-20.23.0 # pinned: the UI and the API change between versions
+    restart: unless-stopped
+    environment:
+      PHOENIX_WORKING_DIR: /mnt/data
+    ports:
+      - "127.0.0.1:6006:6006"
+    volumes:
+      - phoenixdata:/mnt/data
+
+  api:
+    profiles: [api]
+    build: .
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      # The services find each other by name; localhost in .env is the container itself.
+      DATABASE_URL: postgresql://support:${POSTGRES_PASSWORD}@db:5432/support
+      PHOENIX_ENDPOINT: http://phoenix:6006
+    extra_hosts:
+      - "host.docker.internal:host-gateway" # the model server on the host: LLM_ROUTE=http://host.docker.internal:8080/v1
+    ports:
+      - "127.0.0.1:8000:8000"
+    depends_on:
+      db: { condition: service_healthy }
+
+volumes:
+  pgdata:
+  phoenixdata:
