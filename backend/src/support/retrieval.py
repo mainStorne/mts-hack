@@ -18,6 +18,7 @@ from support.settings import settings
 log = logging.getLogger("support.retrieval")
 
 _http = httpx.Client(timeout=60)
+EMBEDDING_DIM = 1024  # bge-m3; the column kb_articles.embedding is vector(1024) (db/schema.sql)
 
 
 def enabled() -> bool:
@@ -41,6 +42,8 @@ def embed(texts: list[str], *, query: bool = False) -> list[list[float]]:
     data = sorted(data, key=lambda item: item["index"])
     if [item["index"] for item in data] != list(range(len(texts))):
         raise ValueError("Embeddings response must contain exactly one vector per input")
+    if any(len(item["embedding"]) != EMBEDDING_DIM for item in data):
+        raise ValueError(f"Expected {EMBEDDING_DIM}-dimensional embeddings: check EMBEDDINGS_MODEL and db/schema.sql")
     return [item["embedding"] for item in data]
 
 

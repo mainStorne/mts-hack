@@ -34,13 +34,16 @@ CREATE INDEX IF NOT EXISTS answers_chat_idx ON answers (chat_id, id);
 
 -- The knowledge base the agents search (db/kb.py, retrieval.py). Seeded from src/support/data/knowledge_base.json for the ids
 -- that are not there yet; after that the table is the source of truth. `embedding` is filled by retrieval.sync() when
--- EMBEDDINGS_ROUTE is set; it has no fixed dimension (so the model can change), hence no vector index: add
--- `vector(N)` + an HNSW index when the base grows beyond a few thousand articles.
+-- EMBEDDINGS_ROUTE is set. 1024 dimensions: bge-m3 (retrieval.py EMBEDDING_DIM checks every vector against it). For another
+-- model change the number here and in EMBEDDING_DIM, and clear the column: `UPDATE kb_articles SET embedding = NULL` first.
 CREATE TABLE IF NOT EXISTS kb_articles (
     id text PRIMARY KEY,
     title text NOT NULL,
     text text NOT NULL,
-    embedding vector,
+    embedding vector(1024),
     updated_at timestamptz NOT NULL DEFAULT now()
 );
+-- A table made before the dimension was fixed (idempotent when it is 1024 already).
+ALTER TABLE kb_articles ALTER COLUMN embedding TYPE vector(1024);
+CREATE INDEX IF NOT EXISTS kb_articles_embedding_idx ON kb_articles USING hnsw (embedding vector_cosine_ops);
 CREATE INDEX IF NOT EXISTS kb_articles_fts_idx ON kb_articles USING gin (to_tsvector('russian', title || ' ' || text));

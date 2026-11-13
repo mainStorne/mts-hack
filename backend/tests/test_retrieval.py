@@ -21,7 +21,10 @@ def server(request: httpx.Request) -> httpx.Response:
     """Embeddings: a one-hot vector per topic word a text mentions. Reranker: 5 for a text with the query's first word, else -5."""
     body = json.loads(request.content)
     if request.url.path.endswith("/embeddings"):
-        vectors = [[float(t in text.lower()) + 0.01 for t in TOPICS] for text in body["input"]]
+        vectors = [
+            [float(t in text.lower()) + 0.01 for t in TOPICS] + [0.0] * (retrieval.EMBEDDING_DIM - len(TOPICS))
+            for text in body["input"]
+        ]
         return httpx.Response(200, json={"data": [{"index": i, "embedding": v} for i, v in enumerate(vectors)]})
     word = body["query"].lower().split()[0]
     scores = [5.0 if word in d.lower() else -5.0 for d in body["documents"]]
@@ -78,6 +81,20 @@ def test_an_article_added_later_is_embedded_before_the_search(servers):
             "INSERT INTO kb_articles (id, title, text) VALUES ('kb-new', 'Роуминг в Китае', 'Пакет роуминг для Китая')"
         )
     assert "kb-new" in [a["id"] for a in retrieval.search("роуминг Китай")]
+
+
+def test_vectors_of_another_size_are_refused_and_search_falls_back(base, monkeypatch):
+    monkeypatch.setattr(settings, "embeddings_route", "http://emb/v1")
+    wrong = httpx.MockTransport(lambda r: httpx.Response(200, json={"data": [{"index": 0, "embedding": [1.0, 2.0]}]}))
+    monkeypatch.setattr(retrieval, "_http", httpx.Client(transport=wrong))
+    assert retrieval.search("потеряна SIM-карта")[0]["id"] == "kb-sim-lost"
+
+
+def test_the_vector_index_exists(base):
+    with pg.connection() as conn:
+        assert "hnsw" in pg.scalar(
+            conn, "SELECT indexdef FROM pg_indexes WHERE indexname = 'kb_articles_embedding_idx'"
+        )
 
 
 def test_a_failing_server_falls_back_to_full_text_search(base, monkeypatch):
