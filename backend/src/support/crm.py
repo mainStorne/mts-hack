@@ -90,6 +90,10 @@ def outages(region: str) -> list[dict]:
         return [copy.deepcopy(o) for o in _outages if o["region"].lower() == wanted]
 
 
+def knowledge_base() -> list[dict]:
+    return _knowledge_base
+
+
 def search_knowledge_base(query: str, limit: int = 3) -> list[dict]:
     """Articles ranked by how many words of the query they contain (a stand-in for a real search)."""
     words = {w for w in re.findall(r"\w+", query.lower()) if len(w) > 2}

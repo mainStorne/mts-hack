@@ -27,6 +27,19 @@ class Settings(BaseSettings):
     agent_summarize_trigger_tokens: int = Field(3000, gt=0)
     agent_summarize_keep_messages: int = Field(6, ge=2)
 
+    # Knowledge-base search (support/retrieval.py): an embeddings server and a reranker server, both OpenAI/llama.cpp-style
+    # (POST /embeddings, POST /rerank). Candidates come from the vectors, the reranker orders them and drops weak matches.
+    # Unset = the plain word-match search of crm.py.
+    embeddings_route: HttpUrl | None = None
+    embeddings_model: str = "bge-m3"
+    embeddings_query_prefix: str = ""
+    reranker_route: HttpUrl | None = None
+    reranker_model: str = "bge-reranker-v2-m3"
+    # Raw reranker scores (logits) below this are "not found": the agent then says so instead of citing a loosely related article.
+    reranker_min_score: float = 0.0
+    kb_candidates: int = Field(8, gt=0)
+    kb_results: int = Field(3, gt=0)
+
     # Arize Phoenix (docker-compose.yml), e.g. http://localhost:6006. Unset = no tracing.
     phoenix_endpoint: HttpUrl | None = None
     phoenix_project: str = "support"

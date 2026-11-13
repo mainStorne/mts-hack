@@ -11,7 +11,7 @@ from langchain_core.messages import ToolMessage
 from langchain_core.tools import BaseTool, tool
 from langgraph.types import Command
 
-from support import crm
+from support import crm, retrieval
 from support.agent.agents import ACCOUNT_TOOLS, AGENTS, START
 from support.agent.state import AgentContext
 
@@ -109,7 +109,7 @@ def verify_customer(phone: str, pin: str, runtime: Runtime) -> Command:
 @tool
 def search_knowledge_base(query: str) -> str:
     """Search the support knowledge base (how-to articles and policies). `query`: a few keywords in Russian."""
-    return _json(crm.search_knowledge_base(query) or "Nothing found.")
+    return _json(retrieval.search(query) or "Nothing found.")
 
 
 # --- billing --------------------------------------------------------------------------------------------------------
