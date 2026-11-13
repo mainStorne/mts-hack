@@ -1,11 +1,13 @@
-"""Knowledge-base search over the Postgres table kb_articles (db/kb.py): vectors find candidates, the reranker orders them and
-drops weak matches.
+"""Knowledge-base search over the Postgres table kb_articles (db/kb.py): full-text and vector search together, then the reranker.
 
-    query ─► embeddings ─► pgvector: the `kb_candidates` nearest articles ─► reranker (a cross-encoder reads the query and
-          the article together) ─► those with a score >= `reranker_min_score`
+    query ─┬► Postgres full-text search (Russian stemming): `kb_candidates` articles that contain its words ─┐
+           └► embeddings ─► pgvector: the `kb_candidates` nearest articles ──────────────────────────────────┤
+                                                       reciprocal rank fusion (an article high in either list wins) ◄┘
+          ─► reranker (a cross-encoder reads the query and the article together) ─► those with a score >= `reranker_min_score`
 
-EMBEDDINGS_ROUTE is required: there is no other search, and a failing embeddings or reranker server is an error of the tool
-(the agent is told and says so). Vectors are 1024-dimensional (the column is vector(1024), db/schema.sql). Embeddings of articles are made by
+Words find exact terms (a tariff name, "APN", "0890") that vectors blur; vectors find paraphrases that share no words. There is
+no fallback: EMBEDDINGS_ROUTE is required, and a failing embeddings or reranker server is an error of the tool (the agent is
+told and says so). Vectors are 1024-dimensional (the column is vector(1024), db/schema.sql). Embeddings of articles are made by
 `sync()`: when the database is set up, and before a search for articles that were added without one.
 """
 
@@ -68,13 +70,28 @@ def sync() -> int:
     return len(missing)
 
 
+RRF_K = 60  # the usual constant of reciprocal rank fusion
+
+
+def fuse(*rankings: list[dict]) -> list[dict]:
+    """One list from several rankings: each article scores 1/(RRF_K + rank) in every list it is in; the best sum first."""
+    scores: dict[str, float] = {}
+    articles: dict[str, dict] = {}
+    for ranking in rankings:
+        for rank, article in enumerate(ranking, start=1):
+            articles[article["id"]] = article
+            scores[article["id"]] = scores.get(article["id"], 0.0) + 1 / (RRF_K + rank)
+    return [articles[i] for i in sorted(scores, key=lambda i: -scores[i])]
+
+
 def search(query: str) -> list[dict]:
     """The articles that answer the query, best first; empty when none is good enough."""
     if not enabled():
-        raise RuntimeError("EMBEDDINGS_ROUTE is not set: the knowledge base is searched by vectors only")
+        raise RuntimeError("EMBEDDINGS_ROUTE is not set: the knowledge base is searched by words and vectors together")
     sync()
     (wanted,) = embed([query], query=True)
-    candidates = kb.nearest(wanted, settings.kb_candidates)
+    candidates = fuse(kb.lexical(query, settings.kb_candidates), kb.nearest(wanted, settings.kb_candidates))
+    candidates = candidates[: settings.kb_candidates]
     if settings.reranker_route is None or not candidates:
         return candidates[: settings.kb_results]
     scores = rerank(query, [_text(a) for a in candidates])

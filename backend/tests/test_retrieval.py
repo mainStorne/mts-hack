@@ -84,6 +84,25 @@ def test_the_vector_index_exists(base):
         )
 
 
+def test_the_words_of_a_query_find_what_the_vectors_miss(servers, monkeypatch):
+    monkeypatch.setattr(settings, "reranker_route", None)  # the fused order itself
+    monkeypatch.setattr(settings, "kb_candidates", 2)
+    (wanted,) = retrieval.embed(["APN"], query=True)
+    # The mock's vectors know no such word: the two nearest articles are not the one that has "APN" in its text.
+    assert "kb-no-internet" not in [a["id"] for a in kb.nearest(wanted, 2)]
+    assert [a["id"] for a in kb.lexical("APN", 2)] == ["kb-no-internet"]
+    assert "kb-no-internet" in [a["id"] for a in retrieval.search("APN")]
+
+
+def test_stemming_matches_other_forms_of_a_word(base):
+    assert kb.lexical("потеряла сим карту", 3)[0]["id"] == "kb-sim-lost"
+
+
+def test_an_article_in_both_lists_beats_the_first_of_one_list():
+    ranked = retrieval.fuse([{"id": "a"}, {"id": "b"}], [{"id": "c"}, {"id": "b"}])
+    assert [a["id"] for a in ranked] == ["b", "a", "c"]
+
+
 def test_search_without_an_embeddings_server_is_an_error(base):
     with pytest.raises(RuntimeError, match="EMBEDDINGS_ROUTE"):
         retrieval.search("потеряна SIM-карта")

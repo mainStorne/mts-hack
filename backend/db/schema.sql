@@ -46,3 +46,4 @@ CREATE TABLE IF NOT EXISTS kb_articles (
 -- A table made before the dimension was fixed (idempotent when it is 1024 already).
 ALTER TABLE kb_articles ALTER COLUMN embedding TYPE vector(1024);
 CREATE INDEX IF NOT EXISTS kb_articles_embedding_idx ON kb_articles USING hnsw (embedding vector_cosine_ops);
+CREATE INDEX IF NOT EXISTS kb_articles_fts_idx ON kb_articles USING gin (to_tsvector('russian', title || ' ' || text));
