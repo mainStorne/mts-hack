@@ -13,10 +13,10 @@ class Settings(BaseSettings):
     llm_route: HttpUrl = HttpUrl("http://localhost:8080/v1")
     llm_api_key: str = "not-needed"
     llm_model: str = "local"
-    llm_max_tokens: int = Field(4096, gt=0)
+    llm_max_tokens: int = Field(8192, gt=0)  # thinking tokens count against it
     llm_temperature: float = Field(0.0, ge=0)
     # Qwen-style "thinking" through chat_template_kwargs; servers that do not know it ignore it.
-    llm_thinking: bool = False
+    llm_thinking: bool = True
 
     # Every user message is screened before the agent (agent/guardrail.py). It fails open when the model is down.
     guardrail_enabled: bool = True
