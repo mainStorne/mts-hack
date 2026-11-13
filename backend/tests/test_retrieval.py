@@ -113,3 +113,14 @@ def test_a_failing_embeddings_server_is_an_error_not_a_silent_fallback(base, mon
     monkeypatch.setattr(retrieval, "_http", httpx.Client(transport=httpx.MockTransport(lambda r: httpx.Response(503))))
     with pytest.raises(httpx.HTTPStatusError):
         retrieval.search("потеряна SIM-карта")
+
+
+def test_results_carry_the_data_the_operation_needs(servers):
+    with pg.connection() as conn:
+        conn.execute("UPDATE kb_articles SET required_inputs = '{passport,sim}' WHERE id = 'kb-sim-lost'")
+        conn.execute("UPDATE kb_articles SET required_inputs = '{}' WHERE id = 'kb-no-signal'")
+    found = retrieval.search("потеряна сим карта")
+    by_id = {a["id"]: a for a in found}
+    assert by_id["kb-sim-lost"]["required_inputs"] == ["паспорт владельца номера", "SIM-карта или её PUK-код"]
+    assert all("required_inputs" not in a for i, a in by_id.items() if i != "kb-sim-lost")
+    assert all(len(a["text"]) <= settings.kb_result_chars for a in found)

@@ -14,6 +14,7 @@ told and says so). Vectors are 1024-dimensional (the column is vector(1024), db/
 import httpx
 
 from support.db import kb
+from support.kb_import.inputs import INPUTS
 from support.settings import settings
 
 _http = httpx.Client(timeout=60)
@@ -57,7 +58,7 @@ def rerank(query: str, documents: list[str]) -> list[float]:
 
 
 def _text(article: dict) -> str:
-    return f"{article['title']}\n{article['text']}"
+    return f"{article['title']}\n{article['text']}"[: settings.kb_embed_chars]
 
 
 def sync() -> int:
@@ -84,6 +85,22 @@ def fuse(*rankings: list[dict]) -> list[dict]:
     return [articles[i] for i in sorted(scores, key=lambda i: -scores[i])]
 
 
+def _result(article: dict, score: float | None = None) -> dict:
+    """What the agent sees of an article: the link, the capped text and, when the operation needs any, the customer's data."""
+    result = {
+        "id": article["id"],
+        "title": article["title"],
+        "url": article.get("url"),
+        "text": article["text"][: settings.kb_result_chars],
+    }
+    if score is not None:
+        result["score"] = round(score, 3)
+    needed = [INPUTS[i] for i in article.get("required_inputs") or [] if i in INPUTS]
+    if needed:
+        result["required_inputs"] = needed
+    return result
+
+
 def search(query: str) -> list[dict]:
     """The articles that answer the query, best first; empty when none is good enough."""
     if not enabled():
@@ -93,7 +110,7 @@ def search(query: str) -> list[dict]:
     candidates = fuse(kb.lexical(query, settings.kb_candidates), kb.nearest(wanted, settings.kb_candidates))
     candidates = candidates[: settings.kb_candidates]
     if settings.reranker_route is None or not candidates:
-        return candidates[: settings.kb_results]
+        return [_result(a) for a in candidates[: settings.kb_results]]
     scores = rerank(query, [_text(a) for a in candidates])
     best = sorted(zip(scores, candidates, strict=True), key=lambda pair: -pair[0])
-    return [{**a, "score": round(s, 3)} for s, a in best[: settings.kb_results] if s >= settings.reranker_min_score]
+    return [_result(a, s) for s, a in best[: settings.kb_results] if s >= settings.reranker_min_score]

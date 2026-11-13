@@ -48,6 +48,17 @@ ALTER TABLE kb_articles ALTER COLUMN embedding TYPE vector(1024);
 CREATE INDEX IF NOT EXISTS kb_articles_embedding_idx ON kb_articles USING hnsw (embedding vector_cosine_ops);
 CREATE INDEX IF NOT EXISTS kb_articles_fts_idx ON kb_articles USING gin (to_tsvector('russian', title || ' ' || text));
 
+-- Articles crawled from a site (kb_import): where from, the page, and what the customer must provide (ids of kb_import/inputs.py).
+ALTER TABLE kb_articles ADD COLUMN IF NOT EXISTS source text NOT NULL DEFAULT 'demo';  -- 'demo' | 'support.mts.ru'
+ALTER TABLE kb_articles ADD COLUMN IF NOT EXISTS kind text NOT NULL DEFAULT 'article';  -- 'article' | 'faq'
+ALTER TABLE kb_articles ADD COLUMN IF NOT EXISTS url text;
+ALTER TABLE kb_articles ADD COLUMN IF NOT EXISTS product text;
+ALTER TABLE kb_articles ADD COLUMN IF NOT EXISTS section text;
+ALTER TABLE kb_articles ADD COLUMN IF NOT EXISTS parent_id text;  -- a faq row: its article's id
+ALTER TABLE kb_articles ADD COLUMN IF NOT EXISTS popular boolean NOT NULL DEFAULT false;
+ALTER TABLE kb_articles ADD COLUMN IF NOT EXISTS required_inputs text[];  -- NULL = not analysed yet
+ALTER TABLE kb_articles ADD COLUMN IF NOT EXISTS modified_at text;
+
 -- The mock back office of the operator (crm.py): tariffs, customers with their charges, known outages and the tickets of
 -- conversations handed to a human. Seeded from src/support/data/seed.json for the keys that are not there yet; after that the
 -- tables are the source of truth. Replace them (and crm.py) with your real systems. PINs are plain text: it is demo data.

@@ -6,8 +6,10 @@ requires-python = ">=3.13"
 dependencies = [
     "arize-phoenix-client>=3.5.0",
     "arize-phoenix-otel>=0.17.2",
+    "beautifulsoup4>=4.15",
     "certifi>=2026.7.22",
     "fastapi>=0.161.1",
+    "html-to-markdown>=3.22.0",
     "httpx>=0.28.1",
     "langchain>=1.4.5",
     "langchain-openai>=1.7.2",
@@ -16,6 +18,7 @@ dependencies = [
     "psycopg-pool>=3.3.3",
     "psycopg[binary]>=3.3.6",
     "pydantic-settings>=2.16.0",
+    "scikit-learn>=1.9.1",
     "uvicorn>=0.54.0",
 ]
 
@@ -23,6 +26,7 @@ dependencies = [
 support = "support.cli:main"
 support-api = "support.api.app:main"
 support-db = "support.db.init:main"
+support-kb = "support.kb_import.cli:main"
 
 [build-system]
 requires = ["uv_build>=0.13.0,<0.14.0"]

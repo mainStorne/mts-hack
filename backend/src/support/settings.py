@@ -39,6 +39,8 @@ class Settings(BaseSettings):
     reranker_min_score: float = 0.0
     kb_candidates: int = Field(8, gt=0)
     kb_results: int = Field(3, gt=0)
+    kb_embed_chars: int = Field(4000, gt=0)  # characters of an article sent to the embeddings and reranker servers
+    kb_result_chars: int = Field(3000, gt=0)  # characters of each article returned to the agent
 
     # Arize Phoenix (docker-compose.yml), e.g. http://localhost:6006. Unset = no tracing.
     phoenix_endpoint: HttpUrl | None = None
