@@ -29,7 +29,7 @@ class Settings(BaseSettings):
 
     # Knowledge-base search (support/retrieval.py): an embeddings server and a reranker server, both OpenAI/llama.cpp-style
     # (POST /embeddings, POST /rerank). Candidates come from the vectors, the reranker orders them and drops weak matches.
-    # Unset = the plain word-match search of crm.py.
+    # Required by the knowledge-base search.
     embeddings_route: HttpUrl | None = None
     embeddings_model: str = "bge-m3"
     embeddings_query_prefix: str = ""

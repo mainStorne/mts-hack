@@ -47,3 +47,51 @@ CREATE TABLE IF NOT EXISTS kb_articles (
 ALTER TABLE kb_articles ALTER COLUMN embedding TYPE vector(1024);
 CREATE INDEX IF NOT EXISTS kb_articles_embedding_idx ON kb_articles USING hnsw (embedding vector_cosine_ops);
 CREATE INDEX IF NOT EXISTS kb_articles_fts_idx ON kb_articles USING gin (to_tsvector('russian', title || ' ' || text));
+
+-- The mock back office of the operator (crm.py): tariffs, customers with their charges, known outages and the tickets of
+-- conversations handed to a human. Seeded from src/support/data/seed.json for the keys that are not there yet; after that the
+-- tables are the source of truth. Replace them (and crm.py) with your real systems. PINs are plain text: it is demo data.
+CREATE TABLE IF NOT EXISTS tariffs (
+    id text PRIMARY KEY,
+    name text NOT NULL,
+    price integer NOT NULL,
+    data_gb integer,  -- NULL: unlimited
+    minutes integer NOT NULL,
+    sms integer NOT NULL,
+    description text NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS customers (
+    phone text PRIMARY KEY,
+    pin text NOT NULL,
+    name text NOT NULL,
+    region text NOT NULL,
+    tariff_id text NOT NULL REFERENCES tariffs (id),
+    balance numeric(12, 2) NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS charges (
+    id text PRIMARY KEY,
+    phone text NOT NULL REFERENCES customers (phone) ON DELETE CASCADE,
+    date date NOT NULL,
+    description text NOT NULL,
+    amount numeric(12, 2) NOT NULL,
+    disputed text  -- the customer's reason, once a dispute is filed
+);
+CREATE INDEX IF NOT EXISTS charges_phone_idx ON charges (phone, date, id);
+
+CREATE TABLE IF NOT EXISTS outages (
+    region text NOT NULL,
+    service text NOT NULL,
+    status text NOT NULL,
+    PRIMARY KEY (region, service)
+);
+
+CREATE TABLE IF NOT EXISTS tickets (
+    id text PRIMARY KEY,
+    phone text,
+    summary text NOT NULL,
+    priority text NOT NULL DEFAULT 'normal',
+    notes text[] NOT NULL DEFAULT '{}',
+    created_at timestamptz NOT NULL DEFAULT now()
+);

@@ -147,7 +147,7 @@ def dispute_charge(charge_id: str, reason: str, runtime: Runtime) -> str:
 @tool
 def list_tariffs() -> str:
     """All available tariffs: id, name, monthly price in rubles, data (GB, null is unlimited), minutes, SMS."""
-    return _json(list(crm.TARIFFS.values()))
+    return _json(crm.tariffs())
 
 
 @tool
@@ -155,7 +155,7 @@ def get_current_tariff(runtime: Runtime) -> str:
     """The verified customer's current tariff."""
     if not (phone := _phone(runtime)):
         return NOT_VERIFIED
-    return _json(crm.TARIFFS[crm.customer(phone)["tariff"]])
+    return _json(crm.tariff(crm.customer(phone)["tariff"]))
 
 
 @tool
@@ -163,12 +163,12 @@ def change_tariff(tariff_id: str, runtime: Runtime) -> str:
     """Switch the verified customer to the tariff `tariff_id` (from list_tariffs). The customer confirms it before it runs."""
     if not (phone := _phone(runtime)):
         return NOT_VERIFIED
-    if tariff_id not in crm.TARIFFS:
+    if (chosen := crm.tariff(tariff_id)) is None:
         return f"Unknown tariff {tariff_id!r}. Use an id from list_tariffs."
     if crm.customer(phone)["tariff"] == tariff_id:
         return "The customer is already on this tariff."
     crm.change_tariff(phone, tariff_id)
-    return f"Done: the tariff is now {crm.TARIFFS[tariff_id]['name']}."
+    return f"Done: the tariff is now {chosen['name']}."
 
 
 # --- tech -----------------------------------------------------------------------------------------------------------

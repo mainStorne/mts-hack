@@ -165,7 +165,7 @@ def _tool_error(error: Exception, request: ToolCallRequest) -> str:
 
 
 def _describe_tariff_change(tool_call, state, runtime) -> str:
-    tariff = crm.TARIFFS.get(tool_call["args"].get("tariff_id"))
+    tariff = crm.tariff(str(tool_call["args"].get("tariff_id")))
     question = next((str(m.content) for m in reversed(state["messages"]) if isinstance(m, HumanMessage)), "")
     if tariff is None:
         return "Сменить тариф"
