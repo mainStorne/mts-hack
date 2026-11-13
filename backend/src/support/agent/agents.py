@@ -9,7 +9,7 @@ specialist that was active. To add a specialist: add it here, its tools to agent
 
 from dataclasses import dataclass
 
-COMPANY = "Telecom Operator"  # the demo brand: change it here
+COMPANY = "MTS Operator"  # the demo brand: change it here
 
 
 @dataclass(frozen=True)

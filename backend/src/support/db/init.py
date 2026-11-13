@@ -1,19 +1,29 @@
 """Database setup.
 
-support-db init    # apply db/schema.sql (safe to repeat; the API also does it when it starts)
+support-db init    # schema + starting knowledge base + its vectors (safe to repeat; the API also does it when it starts)
 """
 
 import argparse
+import logging
 from pathlib import Path
 
-from support.db import pg
+from support import retrieval
+from support.db import kb, pg
+
+log = logging.getLogger("support.db")
 
 SCHEMA = Path(__file__).resolve().parents[3] / "db" / "schema.sql"
 
 
 def init() -> None:
+    """The schema, the starting knowledge base and the vectors of its articles."""
     with pg.connection() as conn:
         conn.execute(SCHEMA.read_text(encoding="utf-8"))  # type: ignore[arg-type]  # a file in this repository, not user input
+    kb.seed()
+    try:
+        retrieval.sync()
+    except Exception as exc:  # noqa: BLE001 - the embeddings server may be down; search embeds what is missing when it is used
+        log.warning("could not embed the knowledge base now (%s)", type(exc).__name__)
 
 
 def main() -> None:

@@ -1,4 +1,4 @@
-"""A mock of the operator's back office: customers, tariffs, outages, tickets and the knowledge base, in memory.
+"""A mock of the operator's back office: customers, tariffs, outages and tickets, in memory (the knowledge base is in Postgres: db/kb.py).
 
 Replace this module with calls to your real systems; the agent's tools (agent/tools.py) are its only users. State lives in
 the process: a restart resets it to data/seed.json (the conversations themselves are in Postgres).
@@ -21,7 +21,6 @@ def _load(name: str):
 
 
 _seed = _load("seed.json")
-_knowledge_base: list[dict] = _load("knowledge_base.json")
 TARIFFS: dict[str, dict] = {t["id"]: t for t in _seed["tariffs"]}
 _customers: dict[str, dict] = {}
 _outages: list[dict] = []
@@ -88,23 +87,6 @@ def outages(region: str) -> list[dict]:
     with _lock:
         wanted = region.strip().lower()
         return [copy.deepcopy(o) for o in _outages if o["region"].lower() == wanted]
-
-
-def knowledge_base() -> list[dict]:
-    return _knowledge_base
-
-
-def search_knowledge_base(query: str, limit: int = 3) -> list[dict]:
-    """Articles ranked by how many words of the query they contain (a stand-in for a real search)."""
-    words = {w for w in re.findall(r"\w+", query.lower()) if len(w) > 2}
-    scored = []
-    for article in _knowledge_base:
-        haystack = f"{article['title']} {article['text']}".lower()
-        score = sum(1 for w in words if w[: max(4, len(w) - 2)] in haystack)
-        if score:
-            scored.append((score, article))
-    scored.sort(key=lambda item: -item[0])
-    return [a for _, a in scored[:limit]]
 
 
 def create_ticket(customer_phone: str | None, summary: str, priority: str = "normal") -> Ticket:

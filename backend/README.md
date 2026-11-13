@@ -32,7 +32,9 @@ handoff это инструмент `transfer_to_<имя>` (`agent/tools.py`), �
 - `change_tariff` выполняется только после `approve` клиента (`HumanInTheLoopMiddleware`; ответ с `approval`, затем `POST /chats/{id}/decision`);
 - нет параллельных вызовов инструментов (две передачи одновременно конфликтовали бы).
 
-Демо-данные: `src/support/data/` и `src/support/crm.py` (мок бэк-офиса в памяти, перезапуск сбрасывает его). Демо-клиенты: `+7 999 000-11-22` PIN `1234`; `+7 999 000-33-44` PIN `4321`.
+Демо-данные: `src/support/crm.py` + `data/seed.json` (мок бэк-офиса в памяти, перезапуск сбрасывает его).
+
+**База знаний** лежит в Postgres, таблица `kb_articles` (`db/kb.py`), поиск идёт только по ней (`retrieval.py`). Стартовые статьи берутся из `data/knowledge_base.json` и один раз вставляются в таблицу (`support-db init` и старт API); существующие статьи не перезаписываются, дальше источник правды таблица. С `EMBEDDINGS_ROUTE` статьи получают векторы (pgvector), поиск: ближайшие по вектору → реранкер (`RERANKER_ROUTE`) → отсечка по `RERANKER_MIN_SCORE`. Без эмбеддингов (или если их сервер упал) работает полнотекстовый поиск Postgres. Нужно расширение `vector` (образ ParadeDB в compose его содержит, для тестов `pgvector/pgvector:pg17`). Демо-клиенты: `+7 999 000-11-22` PIN `1234`; `+7 999 000-33-44` PIN `4321`.
 **Свой проект:** замените `crm.py` вызовами реальных систем, поменяйте специалистов в `agent/agents.py`, их инструменты в `agent/tools.py`.
 
 ## Запуск
@@ -42,7 +44,7 @@ cp .env.example .env              # LLM_ROUTE: адрес OpenAI-совмест�
 docker compose up -d db phoenix   # Postgres и трассировки (http://localhost:6006)
 uv sync
 uv run support-api                # http://localhost:8000/docs; таблицы создаются при старте
-uv run support "у меня не работает интернет"   # или `uv run support` для диалога в терминале (без БД)
+uv run support "у меня не работает интернет"   # или `uv run support` для диалога в терминале (нужна БД с базой знаний)
 ```
 
 Всё в Docker: `docker compose --profile api up -d --build`.
@@ -66,8 +68,8 @@ uv run support "у меня не работает интернет"   # или `
 ## Тесты и проверки
 
 ```bash
-uv run pytest                                  # логика handoff-ов на сценарной модели, без LLM и БД
-TEST_DATABASE_URL=postgresql://support:support@127.0.0.1:5432/support uv run pytest   # + API на Postgres
+uv run pytest                                  # логика handoff-ов на сценарной модели, без LLM и БД (тесты с БД пропускаются)
+TEST_DATABASE_URL=postgresql://support:support@127.0.0.1:5432/support uv run pytest   # + база знаний и API на Postgres с pgvector
 uv run ruff check . && uv run ruff format --check .
 ```
 

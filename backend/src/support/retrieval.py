@@ -1,26 +1,23 @@
-"""Knowledge-base search: vectors find candidates, the reranker orders them and drops weak matches.
+"""Knowledge-base search over the Postgres table kb_articles (db/kb.py): vectors find candidates, the reranker orders them and
+drops weak matches.
 
-    query ─► embeddings ─► cosine against the articles' vectors (embedded once, kept in the process) ─► top `kb_candidates`
-          ─► reranker (a cross-encoder reads query and article together) ─► those with a score >= `reranker_min_score`
+    query ─► embeddings ─► pgvector: the `kb_candidates` nearest articles ─► reranker (a cross-encoder reads the query and
+          the article together) ─► those with a score >= `reranker_min_score`
 
-Without EMBEDDINGS_ROUTE it is crm.search_knowledge_base (word match). With a real knowledge base (hundreds of articles and
-more) keep the vectors in Postgres with pgvector instead of in memory; the docker-compose image already has it.
+Without EMBEDDINGS_ROUTE (or when its server fails) it is Postgres full-text search. Embeddings of articles are made by
+`sync()`: when the database is set up, and before a search for articles that were added without one.
 """
 
 import logging
-import math
-import threading
 
 import httpx
 
-from support import crm
+from support.db import kb
 from support.settings import settings
 
 log = logging.getLogger("support.retrieval")
 
 _http = httpx.Client(timeout=60)
-_lock = threading.Lock()
-_vectors: dict[str, list[float]] = {}
 
 
 def enabled() -> bool:
@@ -64,34 +61,29 @@ def _text(article: dict) -> str:
     return f"{article['title']}\n{article['text']}"
 
 
-def _article_vectors() -> dict[str, list[float]]:
-    with _lock:
-        missing = [a for a in crm.knowledge_base() if a["id"] not in _vectors]
-        if missing:
-            _vectors.update(zip((a["id"] for a in missing), embed([_text(a) for a in missing]), strict=True))
-        return dict(_vectors)
-
-
-def _cosine(a: list[float], b: list[float]) -> float:
-    norm = math.sqrt(sum(x * x for x in a)) * math.sqrt(sum(y * y for y in b))
-    return sum(x * y for x, y in zip(a, b, strict=True)) / norm if norm else 0.0
+def sync() -> int:
+    """Embed the articles that have no vector yet (nothing without EMBEDDINGS_ROUTE); how many were embedded."""
+    if not enabled():
+        return 0
+    missing = kb.without_vectors()
+    if missing:
+        kb.set_vectors(dict(zip((a["id"] for a in missing), embed([_text(a) for a in missing]), strict=True)))
+    return len(missing)
 
 
 def search(query: str) -> list[dict]:
     """The articles that answer the query, best first; empty when none is good enough."""
     if not enabled():
-        return crm.search_knowledge_base(query, settings.kb_results)
+        return kb.lexical(query, settings.kb_results)
     try:
-        vectors = _article_vectors()
+        sync()
         (wanted,) = embed([query], query=True)
-        ranked = sorted(crm.knowledge_base(), key=lambda a: -_cosine(wanted, vectors[a["id"]]))[
-            : settings.kb_candidates
-        ]
-        if settings.reranker_route is None:
-            return ranked[: settings.kb_results]
-        scores = rerank(query, [_text(a) for a in ranked])
-    except (httpx.HTTPError, ValueError, KeyError) as exc:
-        log.warning("vector search failed (%s): falling back to word match", type(exc).__name__)
-        return crm.search_knowledge_base(query, settings.kb_results)
-    best = sorted(zip(scores, ranked, strict=True), key=lambda pair: -pair[0])
+        candidates = kb.nearest(wanted, settings.kb_candidates)
+        if settings.reranker_route is None or not candidates:
+            return candidates[: settings.kb_results]
+        scores = rerank(query, [_text(a) for a in candidates])
+    except (httpx.HTTPError, ValueError) as exc:
+        log.warning("vector search failed (%s): using full-text search", type(exc).__name__)
+        return kb.lexical(query, settings.kb_results)
+    best = sorted(zip(scores, candidates, strict=True), key=lambda pair: -pair[0])
     return [{**a, "score": round(s, 3)} for s, a in best[: settings.kb_results] if s >= settings.reranker_min_score]

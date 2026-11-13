@@ -1,3 +1,5 @@
+CREATE EXTENSION IF NOT EXISTS vector;
+
 -- The tables of the API (applied by `support-db init` and when the API starts; safe to repeat).
 -- The agent's own memory (LangGraph checkpoints) is created by AsyncPostgresSaver.setup().
 
@@ -29,3 +31,16 @@ CREATE TABLE IF NOT EXISTS answers (
     created_at timestamptz NOT NULL DEFAULT now()
 );
 CREATE INDEX IF NOT EXISTS answers_chat_idx ON answers (chat_id, id);
+
+-- The knowledge base the agents search (db/kb.py, retrieval.py). Seeded from src/support/data/knowledge_base.json for the ids
+-- that are not there yet; after that the table is the source of truth. `embedding` is filled by retrieval.sync() when
+-- EMBEDDINGS_ROUTE is set; it has no fixed dimension (so the model can change), hence no vector index: add
+-- `vector(N)` + an HNSW index when the base grows beyond a few thousand articles.
+CREATE TABLE IF NOT EXISTS kb_articles (
+    id text PRIMARY KEY,
+    title text NOT NULL,
+    text text NOT NULL,
+    embedding vector,
+    updated_at timestamptz NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS kb_articles_fts_idx ON kb_articles USING gin (to_tsvector('russian', title || ' ' || text));
