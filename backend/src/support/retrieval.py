@@ -4,21 +4,17 @@ drops weak matches.
     query ─► embeddings ─► pgvector: the `kb_candidates` nearest articles ─► reranker (a cross-encoder reads the query and
           the article together) ─► those with a score >= `reranker_min_score`
 
-Without EMBEDDINGS_ROUTE (or when its server fails) it is Postgres full-text search. Embeddings of articles are made by
+EMBEDDINGS_ROUTE is required: there is no other search, and a failing embeddings or reranker server is an error of the tool
+(the agent is told and says so). Vectors are 1024-dimensional (the column is vector(1024), db/schema.sql). Embeddings of articles are made by
 `sync()`: when the database is set up, and before a search for articles that were added without one.
 """
-
-import logging
 
 import httpx
 
 from support.db import kb
 from support.settings import settings
 
-log = logging.getLogger("support.retrieval")
-
 _http = httpx.Client(timeout=60)
-EMBEDDING_DIM = 1024  # bge-m3; the column kb_articles.embedding is vector(1024) (db/schema.sql)
 
 
 def enabled() -> bool:
@@ -42,8 +38,6 @@ def embed(texts: list[str], *, query: bool = False) -> list[list[float]]:
     data = sorted(data, key=lambda item: item["index"])
     if [item["index"] for item in data] != list(range(len(texts))):
         raise ValueError("Embeddings response must contain exactly one vector per input")
-    if any(len(item["embedding"]) != EMBEDDING_DIM for item in data):
-        raise ValueError(f"Expected {EMBEDDING_DIM}-dimensional embeddings: check EMBEDDINGS_MODEL and db/schema.sql")
     return [item["embedding"] for item in data]
 
 
@@ -77,16 +71,12 @@ def sync() -> int:
 def search(query: str) -> list[dict]:
     """The articles that answer the query, best first; empty when none is good enough."""
     if not enabled():
-        return kb.lexical(query, settings.kb_results)
-    try:
-        sync()
-        (wanted,) = embed([query], query=True)
-        candidates = kb.nearest(wanted, settings.kb_candidates)
-        if settings.reranker_route is None or not candidates:
-            return candidates[: settings.kb_results]
-        scores = rerank(query, [_text(a) for a in candidates])
-    except (httpx.HTTPError, ValueError) as exc:
-        log.warning("vector search failed (%s): using full-text search", type(exc).__name__)
-        return kb.lexical(query, settings.kb_results)
+        raise RuntimeError("EMBEDDINGS_ROUTE is not set: the knowledge base is searched by vectors only")
+    sync()
+    (wanted,) = embed([query], query=True)
+    candidates = kb.nearest(wanted, settings.kb_candidates)
+    if settings.reranker_route is None or not candidates:
+        return candidates[: settings.kb_results]
+    scores = rerank(query, [_text(a) for a in candidates])
     best = sorted(zip(scores, candidates, strict=True), key=lambda pair: -pair[0])
     return [{**a, "score": round(s, 3)} for s, a in best[: settings.kb_results] if s >= settings.reranker_min_score]

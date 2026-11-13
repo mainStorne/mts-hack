@@ -4,7 +4,6 @@ Vectors go to and from Postgres as text ("[0.1,0.2,...]" cast to `vector`), so n
 """
 
 import json
-import re
 from importlib import resources
 
 from support.db import pg
@@ -45,21 +44,6 @@ def nearest(vector: list[float], limit: int) -> list[dict]:
             """SELECT id, title, text FROM kb_articles WHERE embedding IS NOT NULL
                ORDER BY embedding <=> %s::vector LIMIT %s""",
             (_literal(vector), limit),
-        ).fetchall()
-
-
-def lexical(query: str, limit: int) -> list[dict]:
-    """Full-text search (Russian stemming): articles that contain any word of the query, the best matching first."""
-    words = [w for w in re.findall(r"\w+", query.lower()) if len(w) > 2]
-    if not words:
-        return []
-    with pg.connection() as conn:
-        return conn.execute(
-            """SELECT id, title, text FROM kb_articles,
-                      to_tsquery('russian', %s) AS q
-               WHERE to_tsvector('russian', title || ' ' || text) @@ q
-               ORDER BY ts_rank(to_tsvector('russian', title || ' ' || text), q) DESC LIMIT %s""",
-            (" | ".join(words), limit),
         ).fetchall()
 
 

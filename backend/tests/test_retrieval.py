@@ -22,8 +22,7 @@ def server(request: httpx.Request) -> httpx.Response:
     body = json.loads(request.content)
     if request.url.path.endswith("/embeddings"):
         vectors = [
-            [float(t in text.lower()) + 0.01 for t in TOPICS] + [0.0] * (retrieval.EMBEDDING_DIM - len(TOPICS))
-            for text in body["input"]
+            [float(t in text.lower()) + 0.01 for t in TOPICS] + [0.0] * (1024 - len(TOPICS)) for text in body["input"]
         ]
         return httpx.Response(200, json={"data": [{"index": i, "embedding": v} for i, v in enumerate(vectors)]})
     word = body["query"].lower().split()[0]
@@ -58,11 +57,6 @@ def test_the_starting_articles_are_seeded_once_and_never_overwritten(base):
         assert pg.scalar(conn, "SELECT text FROM kb_articles WHERE id = 'kb-sim-lost'") == "правка"
 
 
-def test_full_text_search_without_embeddings(base):
-    assert retrieval.search("потеряла сим карту")[0]["id"] == "kb-sim-lost"
-    assert retrieval.search("") == []
-
-
 def test_vectors_and_the_reranker_find_articles_and_drop_weak_matches(servers):
     found = retrieval.search("интернет пропал")
     assert (
@@ -83,13 +77,6 @@ def test_an_article_added_later_is_embedded_before_the_search(servers):
     assert "kb-new" in [a["id"] for a in retrieval.search("роуминг Китай")]
 
 
-def test_vectors_of_another_size_are_refused_and_search_falls_back(base, monkeypatch):
-    monkeypatch.setattr(settings, "embeddings_route", "http://emb/v1")
-    wrong = httpx.MockTransport(lambda r: httpx.Response(200, json={"data": [{"index": 0, "embedding": [1.0, 2.0]}]}))
-    monkeypatch.setattr(retrieval, "_http", httpx.Client(transport=wrong))
-    assert retrieval.search("потеряна SIM-карта")[0]["id"] == "kb-sim-lost"
-
-
 def test_the_vector_index_exists(base):
     with pg.connection() as conn:
         assert "hnsw" in pg.scalar(
@@ -97,7 +84,13 @@ def test_the_vector_index_exists(base):
         )
 
 
-def test_a_failing_server_falls_back_to_full_text_search(base, monkeypatch):
+def test_search_without_an_embeddings_server_is_an_error(base):
+    with pytest.raises(RuntimeError, match="EMBEDDINGS_ROUTE"):
+        retrieval.search("потеряна SIM-карта")
+
+
+def test_a_failing_embeddings_server_is_an_error_not_a_silent_fallback(base, monkeypatch):
     monkeypatch.setattr(settings, "embeddings_route", "http://emb/v1")
     monkeypatch.setattr(retrieval, "_http", httpx.Client(transport=httpx.MockTransport(lambda r: httpx.Response(503))))
-    assert retrieval.search("потеряна SIM-карта")[0]["id"] == "kb-sim-lost"
+    with pytest.raises(httpx.HTTPStatusError):
+        retrieval.search("потеряна SIM-карта")

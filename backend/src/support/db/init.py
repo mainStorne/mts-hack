@@ -22,7 +22,7 @@ def init() -> None:
     kb.seed()
     try:
         retrieval.sync()
-    except Exception as exc:  # noqa: BLE001 - the embeddings server may be down; search embeds what is missing when it is used
+    except Exception as exc:  # noqa: BLE001 - the embeddings server may be down; the search embeds what is missing when it runs
         log.warning("could not embed the knowledge base now (%s)", type(exc).__name__)
 
 
