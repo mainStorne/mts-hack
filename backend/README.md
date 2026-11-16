@@ -1,8 +1,6 @@
 # Support Agent: backend
 
-Шаблон для хакатона: агент поддержки оператора связи с **состоянием** и **handoff-архитектурой**. Стек перенесён из cAtIx без изменений: Python 3.13 + uv, FastAPI + uvicorn, LangChain `create_agent` / LangGraph (OpenAI-совместимая LLM, например llama.cpp), Postgres (чекпоинты `AsyncPostgresSaver` + таблицы чатов), Arize Phoenix, pytest, ruff/prek, Docker.
-
-Убрано относительно cAtIx: MCP, Telegram-бот и userbot'ы (Telegram, MAX), Redis, воркер, docs/wiki-парсеры, вложения, календарь, Moodle, поиск и эмбеддинги.
+Шаблон для хакатона: агент поддержки оператора связи с **состоянием** и **handoff-архитектурой**. Стек: Python 3.13 + uv, FastAPI + uvicorn, LangChain `create_agent` / LangGraph (OpenAI-совместимая LLM, например llama.cpp), Postgres (чекпоинты `AsyncPostgresSaver` + таблицы чатов), Arize Phoenix, pytest, ruff/prek, Docker.
 
 ## Как это устроено
 
