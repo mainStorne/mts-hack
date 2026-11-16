@@ -23,7 +23,7 @@ JSONL, одна заявка на строку (TRL «conversational prompt-comp
 |---|---|
 | `sync` | rsync кода + `uv sync` на сервере |
 | `data PATH...` | залить датасеты в `data/` на сервере |
-| `gpu-free` | остановить `vllm-1cat` и `llama-lighton` (bge-m3 и reranker остаются) |
+| `gpu-free` | освободить GPU на сервере: остановить фоновые LLM-сервисы (embedder и reranker остаются) |
 | `gpu-restore` | запустить их обратно |
 | `run NAME CMD...` | `sync` + запуск `uv run CMD` в tmux-сессии NAME, лог в `runs/NAME.log` |
 | `log NAME` | хвост лога и статус RUNNING/FINISHED |
