@@ -36,12 +36,23 @@ function network(host){const d=D.network,s=svg(host,980,530,"Граф связе
  d.nodes.forEach(n=>{const g=add(s,"g");add(g,"circle",{cx:n.x,cy:n.y,r:radius,class:"graph-node"+(d.route.includes(n.id)?" graph-node--active":"")});add(g,"text",{x:n.x,y:n.y+8,"text-anchor":"middle",class:"graph-node-text"},n.id);add(g,"text",{x:n.x,y:n.y+72,"text-anchor":"middle",class:"node-label"},n.label)});
  add(s,"text",{x:28,y:515,class:"graph-note"},"Связи неориентированные. Порядок пути задан отдельно.");
 }
-function architecture(host){const d=D.architecture,s=svg(host,1410,510,"Ориентированный граф архитектуры решения"),by=Object.fromEntries(d.nodes.map(n=>[n.id,n]));
- const defs=add(s,"defs");for(const [id,color]of [["arrow-gray","#969fa8"],["arrow-red","#ff0032"]]){let m=add(defs,"marker",{id,markerWidth:9,markerHeight:9,refX:8,refY:4.5,orient:"auto",markerUnits:"userSpaceOnUse"});add(m,"path",{d:"M0 0 L9 4.5 L0 9 Z",fill:color})}
+function architecture(host){const d=D[host.dataset.graph||"architecture"],s=svg(host,d.width||1510,d.height||510,"Ориентированный граф архитектуры решения"),by=Object.fromEntries(d.nodes.map(n=>[n.id,n]));
+ const gid=host.dataset.graph||"architecture",defs=add(s,"defs");for(const [id0,color]of [["arrow-gray","#969fa8"],["arrow-red","#ff0032"]]){const id=id0+"-"+gid;let m=add(defs,"marker",{id,markerWidth:9,markerHeight:9,refX:8,refY:4.5,orient:"auto",markerUnits:"userSpaceOnUse"});add(m,"path",{d:"M0 0 L9 4.5 L0 9 Z",fill:color})}
  if(d.frame){add(s,"rect",{x:d.frame.x,y:d.frame.y,width:d.frame.w,height:d.frame.h,rx:20,fill:"#f9f9fb",stroke:"#e2e5eb","stroke-dasharray":"8 8"});add(s,"text",{x:d.frame.x+26,y:d.frame.y+30,class:"graph-note"},d.frame.label)}
- d.edges.forEach(e=>{const a=by[e.from],b=by[e.to],x1=a.x+a.w,y1=a.y+a.h/2,x2=b.x-14,y2=b.y+b.h/2,mx=(x1+x2)/2,ly=y2+(y1>y2?32:-14);let path=`M${x1},${y1} H${mx} V${y2} H${x2}`;add(s,"path",{d:path,class:"graph-edge"+(e.active?" graph-edge--active":""),"stroke-dasharray":e.dashed?"8 7":"","marker-end":`url(#${e.active?"arrow-red":"arrow-gray"})`});});
- d.nodes.forEach(n=>{add(s,"rect",{x:n.x,y:n.y,width:n.w,height:n.h,rx:12,fill:"#fff",stroke:n.active?"#ff0032":"#bbc1c7","stroke-width":n.active?3:2});add(s,"text",{x:n.x+n.w/2,y:n.y+n.h/2+8,"text-anchor":"middle",class:"diagram-label",style:"font-size:19px"},n.title);});
+ const cx=n=>n.x+n.w/2,cy=n=>n.y+n.h/2;
+ d.edges.forEach(e=>{const a=by[e.from],b=by[e.to];let x1,y1,x2,y2,path,lx,ly;
+  if(e.route==="over"){/* из верхней вершины ромба вверх, над промежуточными узлами, и вниз в верх целевого узла */
+   x1=cx(a);y1=a.y-2;x2=cx(b);y2=b.y-14;const top=a.y-e.over;path=`M${x1},${y1} V${top} H${x2} V${y2}`;lx=(x1+x2)/2;ly=top-12}
+  else{x1=a.x+a.w;y1=cy(a);x2=b.x-14;y2=cy(b);const mx=(x1+x2)/2;path=`M${x1},${y1} H${mx} V${y2} H${x2}`;lx=(x1+x2)/2;ly=y2-14+(e.labelDy||0)}
+  add(s,"path",{d:path,class:"graph-edge"+(e.active?" graph-edge--active":""),"stroke-dasharray":e.dashed?"8 7":"","marker-end":`url(#${e.active?"arrow-red":"arrow-gray"}-${gid})`});
+  if(e.label)add(s,"text",{x:lx,y:ly,"text-anchor":"middle",class:"graph-note"},e.label)});
+ d.nodes.forEach(n=>{const stroke=n.active?"#ff0032":"#bbc1c7",sw=n.active?3:2;
+  if(n.shape==="diamond"){const x=cx(n),y=cy(n);add(s,"path",{d:`M${x},${n.y} L${n.x+n.w},${y} L${x},${n.y+n.h} L${n.x},${y} Z`,fill:"#fff",stroke,"stroke-width":sw,"stroke-linejoin":"round"});
+   const words=n.title.split(" "),half=Math.ceil(words.length/2),lines=[words.slice(0,half).join(" "),words.slice(half).join(" ")].filter(Boolean);
+   lines.forEach((t,i)=>add(s,"text",{x,y:y+8+(i-(lines.length-1)/2)*22,"text-anchor":"middle",class:"diagram-label",style:"font-size:17px"},t))}
+  else{add(s,"rect",{x:n.x,y:n.y,width:n.w,height:n.h,rx:12,fill:"#fff",stroke,"stroke-width":sw});add(s,"text",{x:cx(n),y:cy(n)+(n.sub?0:8),"text-anchor":"middle",class:"diagram-label",style:"font-size:19px"},n.title);if(n.sub)add(s,"text",{x:cx(n),y:cy(n)+26,"text-anchor":"middle",class:"graph-note"},n.sub)}});
 }
+
 function render(){document.querySelectorAll('[data-chart="lines"]').forEach(h=>lineChart(h,{count:Number(h.dataset.count)||5,selected:h.dataset.focus||null}));document.querySelectorAll('[data-chart="single"]').forEach(h=>lineChart(h,{single:true}));document.querySelectorAll('[data-chart="compact-line"]').forEach(h=>lineChart(h,{count:2,compact:true}));document.querySelectorAll('[data-chart="bars"]').forEach(h=>bars(h,{set:h.dataset.set}));document.querySelectorAll('[data-chart="compact-bars"]').forEach(h=>bars(h,{compact:true,set:h.dataset.set}));document.querySelectorAll('[data-chart="scatter"]').forEach(scatter);document.querySelectorAll('[data-chart="network"]').forEach(network);document.querySelectorAll('[data-chart="architecture"]').forEach(architecture)}
 window.MWS_CHARTS={render,lineChart};
 })();

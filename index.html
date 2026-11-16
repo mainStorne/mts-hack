@@ -35,6 +35,44 @@
 .gates-table .ok{color:#1b9388}.gates-table .no{color:var(--red)}
 .gates-table tr.threshold td{background:var(--soft);color:var(--muted);vertical-align:middle}
 .gates-table tr.threshold td:first-child{font-weight:500}
+.scale-detail .section-content{gap:36px;justify-content:center}
+.scale-detail .section-title{font-size:96px;line-height:1.06}
+.scale-detail .scale-text{display:flex;flex-direction:column;gap:22px;max-width:1380px}
+.scale-detail .scale-text p{font:400 34px/46px var(--body);color:var(--ink)}
+.scale-detail .scale-text p.muted{color:var(--muted)}
+.scale-detail .scale-text code{font:500 .92em var(--compact);background:var(--soft);border-radius:8px;padding:2px 10px}
+.scale-detail .lang-layout{display:grid;grid-template-columns:600px minmax(0,1fr);gap:40px;align-items:center}
+.scale-detail .lang-copy .section-title{font-size:58px;margin-bottom:26px;letter-spacing:-.03em}
+.scale-detail .lang-copy .scale-text p{font-size:26px;line-height:37px}
+.scale-detail .lang-graph{min-width:0}.scale-detail .lang-graph svg{width:100%;height:auto}
+.scale-detail .batch-layout{gap:30px;justify-content:center}
+.scale-detail .batch-layout .section-title{font-size:64px;letter-spacing:-.03em}
+.scale-detail .batch-graph{min-width:0}.scale-detail .batch-graph svg{width:100%;height:auto;max-height:470px}
+.scale-detail .batch-note{font:400 25px/36px var(--body);color:var(--muted);max-width:1380px}
+.scale-detail .batch-note code{font:500 .92em var(--compact);background:var(--soft);border-radius:8px;padding:2px 10px;color:var(--ink)}
+.train-slide .slide-title{font-size:46px}
+.train-slide .train-lead{font:400 26px/36px var(--body);color:var(--muted);max-width:1380px}
+.train-slide .train-cols{display:grid;grid-template-columns:1.25fr 1fr;gap:56px;flex:1;min-height:0;align-items:start}
+.train-slide .train-col h3{font:500 30px/38px var(--compact);margin-bottom:6px}
+.train-slide .train-col .adapter{font:500 22px/30px var(--compact);color:var(--red);margin-bottom:14px}
+.train-slide .train-col ul{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:12px}
+.train-slide .train-col li{font:400 22px/31px var(--body);color:var(--ink);padding-left:22px;position:relative}
+.train-slide .train-col li::before{content:"";position:absolute;left:0;top:13px;width:8px;height:8px;border-radius:50%;background:var(--red)}
+.train-slide .train-col li.muted{color:var(--muted)}
+.train-slide .train-col code{font:500 .9em var(--compact);background:var(--soft);border-radius:6px;padding:1px 8px}
+.train-slide .tau,.train-slide .train-result{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.train-slide .tau span,.train-slide .train-result span{font:500 19px/26px var(--compact);background:var(--soft);border-radius:8px;padding:4px 12px;color:var(--ink)}
+.train-slide .tau span b,.train-slide .train-result span b{font-weight:500;margin-left:6px}
+.train-slide .tau span b{color:var(--red)}
+.train-slide .train-result span{color:var(--muted)}
+.train-slide .train-result span b{color:var(--ink)}
+.finetune-slide .slide-title{font-size:56px}
+.finetune-slide .ft-cols{display:grid;grid-template-columns:1fr 1fr;gap:64px;flex:1;min-height:0;align-items:start;padding-top:24px}
+.finetune-slide .ft-col{border-top:4px solid var(--red);padding-top:28px;display:flex;flex-direction:column;gap:20px}
+.finetune-slide .ft-col h3{font:500 36px/44px var(--compact)}
+.finetune-slide .ft-col p{font:400 28px/40px var(--body);color:var(--ink)}
+.finetune-slide .ft-col p.muted{color:var(--muted)}
+.finetune-slide .ft-col code{font:500 .9em var(--compact);background:var(--soft);border-radius:8px;padding:2px 10px}
 .section-slide--light{background:#fff;color:var(--ink)}
 .section-slide--light .topline,.section-slide--light .master-label,.section-slide--light .slide-footer{color:var(--muted)}
 .section-slide--light .brand{color:var(--ink)}
@@ -125,6 +163,37 @@
   <footer class="slide-footer"><span class="slide-footer__source">Дубли остаются за GLiNER (у Gemma нет спанов) · схема финального решения</span><span class="page-number"></span></footer>
 </section></div>
 
+<!-- КАК ОБУЧАЛИ -->
+<div class="slide-shell" data-name="Как обучали" hidden><section class="slide train-slide" data-master="spec">
+  <header class="topline"><p class="eyebrow">Обучение</p><span class="master-label">Как обучали</span></header>
+  <h2 class="slide-title">Как обучали</h2>
+  <p class="train-lead">Ансамбль состоит из двух предобученных моделей, реранкера и жадной настройки порогов.</p>
+  <div class="slide-body train-cols">
+    <div class="train-col">
+      <h3>GLiNER</h3>
+      <p class="adapter">LoRA-адаптер runs/struct-lora-v21</p>
+      <ul>
+        <li>Адаптер даёт сырые спаны с уверенностью. Пороги подбираются на dev, не на val.</li>
+        <li>Сначала перебор сетки </li>
+        <li>Затем покоординатный подбор <code>tau</code> по каждому атрибуту (0.3…0.9).</li>
+        <li>Итоговые значения <code>tau_attr</code>:
+          <div class="tau"><span>service_state<b>0.9</b></span><span>tariff<b>0.5</b></span><span>ticket_status<b>0.5</b></span><span>action<b>0.7</b></span><span>agreement<b>0.8</b></span></div>
+          <div class="train-result"><span>snap_th <b>0.5</b></span><span>date_tau <b>null</b></span><span>dev F1 <b>0.5602</b></span><span>dev_gate_ok <b>false</b></span></div>
+        </li>
+        <li class="muted">Обучался только на предоставленных тренировочных данных.</li>
+      </ul>
+    </div>
+    <div class="train-col">
+      <h3>Gemma</h3>
+      <p class="adapter">LoRA-адаптер gemma-v21-targeted-gen</p>
+      <ul>
+        <li>Дообучения этих моделей по фолдам нет. Ансамбль работает с уже готовыми предсказаниями.</li>
+        <li class="muted">Обучался только на предоставленных тренировочных данных.</li>
+      </ul>
+    </div>
+  </div>
+</section></div>
+
 <!-- 08 · РЕСУРСЫ × КАЧЕСТВО -->
 <div class="slide-shell" data-name="Ресурсы × качество" hidden><section class="slide figure-slide" data-master="single-chart">
   <header class="topline"><p class="eyebrow">Ресурсы × качество</p><span class="master-label">Параметры и F1</span></header>
@@ -139,13 +208,72 @@
     <table class="comparison gates-table">
       <thead><tr><th>модель</th><th>P</th><th>R</th><th>F1</th><th>temporal</th><th>state</th><th>grounding</th><th>гейты</th></tr></thead>
       <tbody>
-        <tr><td>glm-5.3 (base line)</td><td>0,3348</td><td>0,3805</td><td>0,3562</td><td><b>0,4706</b></td><td>0,5345</td><td>0,7835</td><td class="gate"><span class="ok">✓</span><span class="ok">✓</span><span class="ok">✓</span></td></tr>
-        <tr><td>продакшен struct-lora (шум)</td><td><b>0,6414</b></td><td>0,4905</td><td>0,5559</td><td>0,3937</td><td>0,5185</td><td>0,7602<small>(span 0,973)</small></td><td class="gate"><span class="no">✕</span><span class="ok">✓</span><span class="no">✕</span></td></tr>
-        <tr><td>«4e+Denoise» raw (веса в общем доступе)</td><td>0,5440</td><td>0,5696</td><td>0,5565</td><td><b>0,4629</b></td><td><b>0,5634</b></td><td>0,7907</td><td class="gate"><span class="ok">✓</span><span class="ok">✓</span><span class="ok">✓</span></td></tr>
-        <tr><td>ens-v3 (GLiNER+Gemma+реранкер, OOF)</td><td><b>0,7579</b></td><td><b>0,5566</b></td><td><b>0,6418</b></td><td><b>0,4923</b></td><td><b>0,5714</b></td><td>0,7984<small>(span 0,9761)</small></td><td class="gate"><span class="ok">✓</span><span class="ok">✓</span><span class="ok">✓</span></td></tr>
+
+        <tr><td>GLiNER</td><td><b>0,6414</b></td><td>0,4905</td><td>0,5559</td><td>0,3937</td><td>0,5185</td><td>0,7602<small>(span 0,973)</small></td><td class="gate"><span class="no">✕</span><span class="ok">✓</span><span class="no">✕</span></td></tr>
+        <tr><td>Gemma3-1b</td><td>0,5440</td><td>0,5696</td><td>0,5565</td><td><b>0,4629</b></td><td><b>0,5634</b></td><td>0,7907</td><td class="gate"><span class="ok">✓</span><span class="ok">✓</span><span class="ok">✓</span></td></tr>
+        <tr><td>Ансамбль</td><td><b>0,7579</b></td><td><b>0,5566</b></td><td><b>0,6418</b></td><td><b>0,4923</b></td><td><b>0,5714</b></td><td>0,7984<small>(span 0,9761)</small></td><td class="gate"><span class="ok">✓</span><span class="ok">✓</span><span class="ok">✓</span></td></tr>
+        <tr class="threshold"><td>(base line) glm-5.3</td><td>0,3348</td><td>0,3805</td><td>0,3562</td><td><b>0,4706</b></td><td>0,5345</td><td>0,7835</td><td class="gate"><span class="ok">✓</span><span class="ok">✓</span><span class="ok">✓</span></td></tr>
         <tr class="threshold"><td>порог гейта</td><td>0,3148</td><td>0,3605</td><td>0,3361</td><td>0,4506</td><td>0,5145</td><td>0,7635</td><td class="gate">—</td></tr>
       </tbody>
     </table>
+  </div>
+</section></div>
+
+<!-- МАСШТАБИРОВАНИЕ -->
+<div class="slide-shell" data-name="Масштабирование" hidden><section class="slide section-slide section-slide--light" data-master="section">
+  <header class="topline"><div class="brand"><img src="mws-mark.svg" alt="MWS">MWS Cloud Platform</div><span class="master-label">Масштабирование</span></header>
+  <div class="section-content"><h2 class="section-title">Масштабирование</h2></div>
+</section></div>
+
+<!-- МАСШТАБИРОВАНИЕ · МИКРОБАТЧИНГ -->
+<div class="slide-shell" data-name="Микробатчинг очередь" hidden><section class="slide section-slide section-slide--light scale-detail" data-master="section">
+  <header class="topline"><div class="brand"><img src="mws-mark.svg" alt="MWS">MWS Cloud Platform</div><span class="master-label">Масштабирование</span></header>
+  <div class="section-content batch-layout">
+    <h2 class="section-title">Микробатчинг очередь</h2>
+    <figure class="diagram-wrap batch-graph" data-chart="architecture" data-graph="batching" aria-label="Схема: звонки A, B и C попадают через /extract в очередь queue, батчер копит их 5–20 мс и делает один вызов batch_extract, затем факты раздаются обратно каждому звонку по futures"></figure>
+    <h2>Ставим транскрипции в очередь и обрабатываем их пакетами</h2>
+  </div>
+  <aside class="speaker-notes" hidden>Сейчас модель не может обрабатывать несколько запросов параллельно. Можно ввести прикладную очередь: /extract не блокирует лок, а кладёт запрос в queue. Отдельный воркер-батчер копит элементы 5–20 мс (или до K звонков / M контекстов), объединяет контексты разных звонков в один batch_extract, затем раздаёт факты по futures'ам. Так получится эффективнее распределять ресурсы.</aside>
+</section></div>
+
+<!-- МАСШТАБИРОВАНИЕ · КАСКАДНЫЙ РОУТЕР -->
+<div class="slide-shell" data-name="Каскадный роутер" hidden><section class="slide section-slide section-slide--light scale-detail" data-master="section">
+  <header class="topline"><div class="brand"><img src="mws-mark.svg" alt="MWS">MWS Cloud Platform</div><span class="master-label">Масштабирование</span></header>
+  <div class="section-content batch-layout">
+    <h2 class="section-title">Каскадный роутер</h2>
+    <figure class="diagram-wrap batch-graph" data-chart="architecture" data-graph="cascade" aria-label="Схема: звонок, признаки для оценки сложности, затем развилка: лёгкий случай идёт в малую модель GLiNER, тяжёлый в большую модель Gemma, обе выдают факты"></figure>
+    <p class="batch-note">По признакам определяем сложность звонка. Более лёгкий случай — отдаём маленькой модели (GLiNER). Потяжелее — большой (Gemma).</p>
+  </div>
+</section></div>
+
+<!-- ПРЕДЛОЖЕНИЯ ПО ДООБУЧЕНИЮ -->
+<div class="slide-shell" data-name="Предложения по дообучению" hidden><section class="slide finetune-slide" data-master="spec">
+  <header class="topline"><p class="eyebrow">Развитие</p><span class="master-label">Дообучение</span></header>
+  <h2 class="slide-title">Предложения по дообучению</h2>
+  <div class="slide-body ft-cols">
+    <div class="ft-col">
+      <h3>Отбор по уверенности</h3>
+      <p>Размечаем новые данные сильной моделькой, если уверенность высокая - берём в дообучение.</p>
+    </div>
+    <div class="ft-col">
+      <h3>Самообучение с реранкером как контролёром</h3>
+      <p>Используя оценку логистической регрессии решаем, какие предсказания возвращаются в обучающую выборку, а какие нет.</p>
+      <p class="muted">Дёшево, потому что реранкер уже обучен.</p>
+    </div>
+  </div>
+</section></div>
+
+<!-- МАСШТАБИРОВАНИЕ · МНОГОЯЗЫЧНОСТЬ -->
+<div class="slide-shell" data-name="Многоязычность" hidden><section class="slide section-slide section-slide--light scale-detail" data-master="section">
+  <header class="topline"><div class="brand"><img src="mws-mark.svg" alt="MWS">MWS Cloud Platform</div><span class="master-label">Масштабирование</span></header>
+  <div class="section-content lang-layout">
+    <div class="lang-copy"><h2 class="section-title">Многоязычность</h2>
+      <div class="scale-text">
+        <p>Чтобы добавить новый язык не нужно пересобирать пайплайн заново: достаточно собрать новый каталог атрибутов и поставить соответствующий LoRA Adapter на модель, после чего обучить.</p>
+        <p class="muted">Мы предполагаем, что модель не потеряет точность на новом языке.</p>
+      </div>
+    </div>
+    <figure class="diagram-wrap lang-graph" data-chart="architecture" data-graph="languages" aria-label="Схема: одна модель, от неё три ветки, на каждой своя LoRA Adapter для отдельного языка"></figure>
   </div>
 </section></div>
 
