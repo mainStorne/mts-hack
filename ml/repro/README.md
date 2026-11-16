@@ -16,3 +16,9 @@
 Побитового совпадения весов нет. Критерий повторения — метрики val в пределах ±0,01 от записанных.
 `data/gen/{new_calls,repair}.jsonl` сгенерированы LLM, генератора нет — они замороженные входы и не перегенерируются.
 Записанные конфиги и логи обучения: `repro/recorded/`. Окружение: `uv.lock` (GLiNER, торч 2.14.1+cu126) и `gemma/uv.lock` (Gemma).
+
+## Проверено на чистом клоне (ноутбук Ryzen 7 5825U, 14 ГБ, без GPU)
+- `./repro.sh verify` после `tar --zstd -xf cfe-inputs-v1.tar.zst`: ok; порча байта → FAILED, код 1.
+- `PY=<python> GEMMA_BASE=<каталог с tokenizer.json> ./repro.sh data`: `sft_train.jsonl` (5402 строки, `46316203…`) и `sft_eval.jsonl` (`e1c1aa6f…`) совпадают с серверными побайтово. Для шага нужны `transformers`, `pyyaml`, `sentencepiece`, `jinja2` (токенайзер Gemma; веса не нужны).
+- Веса из `weights/` совпадают с `MANIFEST.json` по sha256.
+- GLiNER на CPU (fp32) на 20 звонках val: наборы фактов совпали с эталоном из `raw_test.jsonl` (GPU, fp16) в 20 из 20; нарушений схемы 0; 29 с на звонок.
