@@ -67,7 +67,8 @@
 .train-slide .train-result span{color:var(--muted)}
 .train-slide .train-result span b{color:var(--ink)}
 .finetune-slide .slide-title{font-size:56px}
-.finetune-slide .ft-cols{display:grid;grid-template-columns:1fr 1fr;gap:64px;flex:1;min-height:0;align-items:start;padding-top:24px}
+.finetune-slide .ft-cols{display:grid;grid-template-columns:1fr 1fr;gap:40px 64px;flex:1;min-height:0;align-content:start;align-items:start;padding-top:24px}
+.finetune-slide .ft-col.wide{grid-column:1 / -1}
 .finetune-slide .ft-col{border-top:4px solid var(--red);padding-top:28px;display:flex;flex-direction:column;gap:20px}
 .finetune-slide .ft-col h3{font:500 36px/44px var(--compact)}
 .finetune-slide .ft-col p{font:400 28px/40px var(--body);color:var(--ink)}
@@ -299,6 +300,10 @@
       <h3>Самообучение с реранкером как контролёром</h3>
       <p>Используя оценку логистической регрессии решаем, какие предсказания возвращаются в обучающую выборку, а какие нет.</p>
       <p class="muted">Дёшево, потому что реранкер уже обучен.</p>
+    </div>
+    <div class="ft-col wide">
+      <h3>При появлении нового атрибута</h3>
+      <p>Нужны примеры нового типа. Либо размеченные (gold), либо сгенерированные LLM с последующей проверкой. Без примеров в train модель тип не выучит.</p>
     </div>
   </div>
 </section></div>
