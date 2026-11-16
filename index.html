@@ -73,6 +73,46 @@
 .finetune-slide .ft-col p{font:400 28px/40px var(--body);color:var(--ink)}
 .finetune-slide .ft-col p.muted{color:var(--muted)}
 .finetune-slide .ft-col code{font:500 .9em var(--compact);background:var(--soft);border-radius:8px;padding:2px 10px}
+.res-slide .slide-title{font-size:44px}
+.res-slide .res-table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+.res-slide .res-table th{font:500 17px/24px var(--body);color:var(--muted);text-align:left;padding:10px 14px;background:var(--soft);border-bottom:1px solid var(--line)}
+.res-slide .res-table td{font:400 21px/28px var(--body);padding:7px 14px;border-bottom:1px solid var(--line);vertical-align:middle}
+.res-slide .res-table th.n,.res-slide .res-table td.n{text-align:right}
+.res-slide .res-table td:first-child,.res-slide .res-table th:first-child{padding-left:16px}
+.res-slide .res-table tr.hl td{background:#fff1f3}
+.res-slide .res-table td b{font-weight:500}
+.res-slide .res-table{table-layout:fixed}
+.res-slide .res-table th:nth-child(1){width:31%}
+.res-slide .res-table th:nth-child(2){width:8%}
+.res-slide .res-table th:nth-child(3){width:12%}
+.res-slide .res-table th:nth-child(4){width:11%}
+.res-slide .res-table th:nth-child(5){width:13%}
+.res-slide .res-table th:nth-child(6){width:15%}
+.res-slide .res-table th:nth-child(7){width:10%}
+.res-slide .res-table td .sub{display:block;font:400 16px/22px var(--body);color:var(--muted)}
+.res-slide .res-table .dim{color:var(--muted)}
+.res-slide .res-note{font:400 22px/32px var(--body);border-left:4px solid var(--red);padding:2px 0 2px 20px;max-width:1400px}
+.res-slide .res-note b{font-weight:500}
+.res-slide .res-src{font:400 15px/22px var(--body);color:var(--muted)}
+.noise-slide .slide-title{font-size:44px}
+.noise-slide .noise-cols{display:grid;grid-template-columns:1.18fr 1fr;gap:44px;align-items:start}
+.noise-slide .noise-cap{font:500 20px/28px var(--compact);margin-bottom:8px}
+.noise-slide .noise-cap span{font:400 16px/22px var(--body);color:var(--muted);margin-left:8px}
+.noise-slide .noise-table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums;table-layout:fixed}
+.noise-slide .noise-table th{font:500 16px/22px var(--body);color:var(--muted);text-align:left;padding:9px 10px;background:var(--soft);border-bottom:1px solid var(--line)}
+.noise-slide .noise-table td{font:400 21px/28px var(--body);padding:9px 10px;border-bottom:1px solid var(--line)}
+.noise-slide .noise-table th.n,.noise-slide .noise-table td.n{text-align:right}
+.noise-slide .noise-table td:first-child,.noise-slide .noise-table th:first-child{padding-left:14px}
+.noise-slide .noise-table td b{font-weight:500}
+.noise-slide .noise-table td.dim{color:var(--muted)}
+.noise-slide .noise-table td.drop{color:var(--red)}
+.noise-slide .noise-table tr.hl td{background:#fff1f3}
+.noise-slide .noise-table td small{font:400 15px/20px var(--body);color:var(--muted);margin-left:6px}
+.noise-slide .noise-list{list-style:none;padding:0;margin:0;display:grid;grid-template-columns:repeat(3,1fr);gap:28px}
+.noise-slide .noise-list li{border-top:4px solid var(--red);padding-top:14px;font:400 21px/30px var(--body)}
+.noise-slide .noise-list li b{display:block;font:500 22px/30px var(--compact);margin-bottom:4px}
+.noise-slide .noise-list li.gray{border-top-color:#969fa8}
+.noise-slide .noise-src{font:400 15px/22px var(--body);color:var(--muted)}
 .section-slide--light{background:#fff;color:var(--ink)}
 .section-slide--light .topline,.section-slide--light .master-label,.section-slide--light .slide-footer{color:var(--muted)}
 .section-slide--light .brand{color:var(--ink)}
@@ -282,6 +322,69 @@
   <header class="topline"><div class="brand"><img src="mws-mark.svg" alt="MWS">MWS Cloud Platform</div><span class="master-label">Демонстрация</span></header>
   <div class="section-content"><h2 class="section-title">Демонстрация</h2></div>
   <footer class="slide-footer"><span class="slide-footer__source">Команда one-zero-eight · MTS MWS · Innopolis Global Hack · 13–16 ноября 2026</span><span class="page-number"></span></footer>
+</section></div>
+
+<!-- ЗАМЕРЫ РЕСУРСОВ -->
+<div class="slide-shell" data-name="Замеры ресурсов" hidden><section class="slide res-slide" data-master="comparison">
+  <header class="topline"><p class="eyebrow">Единая методика замеров</p><span class="master-label">Ресурсы</span></header>
+  <h2 class="slide-title">Замеры ресурсов</h2>
+  <div class="slide-body" style="justify-content:flex-start;gap:16px">
+    <table class="res-table">
+      <thead><tr><th>конфигурация</th><th class="n">звонков</th><th class="n">GPU-с / звонок</th><th class="n">с на звонок</th><th class="n">p50 / p95, с</th><th class="n">пик VRAM, ГБ</th><th class="n">пик RSS, ГБ</th></tr></thead>
+      <tbody>
+        <tr><td>GLiNER · GPU · batch 16</td><td class="n">383</td><td class="n">1,0</td><td class="n">1,1</td><td class="n dim">—</td><td class="n">6,7</td><td class="n">3,2</td></tr>
+        <tr><td>Gemma · GPU · batch 16<span class="sub">230 токенов</span></td><td class="n">383</td><td class="n">2,07</td><td class="n">2,07</td><td class="n dim">—</td><td class="n">6,3</td><td class="n">3,0</td></tr>
+        <tr><td>Ансамбль · GPU · batch 16<span class="sub">GLiNER 0,97 + Gemma 1,68</span></td><td class="n">383</td><td class="n">2,65</td><td class="n">2,90</td><td class="n dim">—</td><td class="n">8,8</td><td class="n">3,7</td></tr>
+        <tr class="hl"><td><b>Ансамбль · V100 · vLLM · batch 1</b><span class="sub">образ cfe-gpu:1.0-v100</span></td><td class="n">5</td><td class="n">2,30</td><td class="n">2,66</td><td class="n">2,34 / 4,11</td><td class="n"><b>16,6</b><span class="sub"></span></td><td class="n">3,2</td></tr>
+        <tr><td>Ансамбль · V100 · HF · batch 1</td><td class="n">5</td><td class="n">14,6</td><td class="n">14,9</td><td class="n">14,1 / 17,9</td><td class="n">5,4</td><td class="n">3,6</td></tr>
+        <tr><td>Ансамбль · CPU 16 ядер<span class="sub">cfe-gpu:1.0-v100, CFE_DEVICE=cpu</span></td><td class="n">5</td><td class="n dim">—</td><td class="n">36,8</td><td class="n">29,8 / 66,6</td><td class="n dim">—</td><td class="n">8,85</td></tr>
+        <tr><td>Ансамбль · CPU 8 ядер<span class="sub">cfe-cpu:1.0-amd64</span></td><td class="n">40</td><td class="n dim">—</td><td class="n">102</td><td class="n">88,9 / 244</td><td class="n dim">—</td><td class="n">9,2</td></tr>
+      </tbody>
+    </table>
+    <p class="res-note"><b>vLLM быстрее HF в 5,6 раза</b> (2,66 с против 14,9 с на звонок, те же 5 звонков), качество то же. Цена — память: 16,6 ГБ против 7,1 ГБ суммарно по nvidia-smi (vLLM резервирует 35% памяти GPU).</p>
+  </div>
+
+</section></div>
+
+<!-- УСТОЙЧИВОСТЬ К ШУМУ -->
+<div class="slide-shell" data-name="Устойчивость к шуму" hidden><section class="slide noise-slide" data-master="comparison">
+  <header class="topline"><p class="eyebrow">Adversarial-подмножество</p><span class="master-label">Устойчивость к шуму</span></header>
+  <h2 class="slide-title">Устойчивость к шуму: точность держится, полнота падает</h2>
+  <div class="slide-body" style="justify-content:flex-start;gap:22px">
+    <div class="noise-cols">
+      <div>
+        <p class="noise-cap">Качество<span>40 звонков · val без добавки, p20/p40/p60 = +0,20/+0,40/+0,60 шума</span></p>
+        <table class="noise-table">
+          <thead><tr><th>срез</th><th class="n">P</th><th class="n">R</th><th class="n">F1</th><th class="n">temporal</th><th class="n">state</th><th class="n">grounding</th></tr></thead>
+          <tbody>
+            <tr><td>val</td><td class="n">0,745</td><td class="n">0,580</td><td class="n"><b>0,652</b></td><td class="n dim">0,500</td><td class="n dim">0,642</td><td class="n">0,792</td></tr>
+            <tr><td>p20</td><td class="n">0,757</td><td class="n">0,527</td><td class="n"><b>0,621</b></td><td class="n dim">0,478</td><td class="n dim">0,508</td><td class="n">0,762</td></tr>
+            <tr><td>p40</td><td class="n">0,746</td><td class="n">0,469</td><td class="n"><b>0,576</b></td><td class="n dim">0,509</td><td class="n dim">0,508</td><td class="n">0,691</td></tr>
+            <tr class="hl"><td>p60</td><td class="n">0,771</td><td class="n drop">0,406</td><td class="n drop"><b>0,532</b></td><td class="n dim">0,633</td><td class="n dim">0,508</td><td class="n">0,702</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div>
+        <p class="noise-cap">Recall по типам фактов<span>40 звонков</span></p>
+        <table class="noise-table">
+          <thead><tr><th>тип факта</th><th class="n">val</th><th class="n">p20</th><th class="n">p40</th><th class="n">p60</th></tr></thead>
+          <tbody>
+            <tr><td>ticket_status</td><td class="n">1,00</td><td class="n">0,98</td><td class="n">0,94</td><td class="n">0,88</td></tr>
+            <tr><td>tariff</td><td class="n">0,82</td><td class="n">0,76</td><td class="n drop">0,53</td><td class="n">0,47</td></tr>
+            <tr><td>service_state</td><td class="n">0,51</td><td class="n">0,40</td><td class="n">0,33</td><td class="n">0,29</td></tr>
+            <tr><td>action</td><td class="n">0,37</td><td class="n">0,26</td><td class="n">0,21</td><td class="n">0,24</td></tr>
+            <tr><td>agreement</td><td class="n">0,33</td><td class="n">0,33</td><td class="n">0,32</td><td class="n drop">0,19</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <ul class="noise-list">
+      <li><b>Точность не страдает</b>Precision 0,75–0,77 на всех срезах: модель реже угадывает, но реже ошибается. Теряется полнота: 0,580 → 0,406. F1 к val: −0,031 (p20), −0,077 (p40), −0,121 (p60).</li>
+      <li><b>Что страдает больше всего</b>service_state и tariff, где нужно распознать значение по испорченным словам. Меньше всех — ticket_status (шаблонные формулировки).</li>
+      <li class="gray"><b>temporal и state — мало данных</b>На зашумлённых срезах датируемых фактов мало, различия не значимы; фактов состояния всего 67. Серые числа не стоит читать как тренд.</li>
+    </ul>
+  </div>
+
 </section></div>
 
 <!-- ФИНАЛ -->

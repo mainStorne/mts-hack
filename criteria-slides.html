@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="ru">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>one-zero-eight · слайды под критерии</title><link rel="stylesheet" href="masters.css"><style>
+/* Слайды под критерии оценивания. Отдельный файл: в основную презентацию не включён. */
+.crit .slide-title{font-size:46px}
+.crit .lead{font:400 24px/34px var(--body);color:var(--muted);max-width:1380px}
+.crit .src{font:400 15px/22px var(--body);color:var(--muted)}
+.crit .src b{font-weight:500;color:var(--ink)}
+.crit table.t{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+.crit table.t th{font:500 17px/24px var(--body);color:var(--muted);text-align:left;padding:10px 14px;background:var(--soft);border-bottom:1px solid var(--line)}
+.crit table.t td{font:400 22px/30px var(--body);padding:11px 14px;border-bottom:1px solid var(--line);vertical-align:middle}
+.crit table.t td:first-child,.crit table.t th:first-child{padding-left:16px}
+.crit table.t td.n,.crit table.t th.n{text-align:right}
+.crit table.t td b{font-weight:500}
+.crit table.t .bad{color:var(--red)}.crit table.t .good{color:#1b9388}.crit table.t .dim{color:var(--muted)}
+.crit table.t tr.hl td{background:#fff1f3}
+.crit .cols{display:grid;gap:48px;flex:1;min-height:0;align-items:start}
+.crit .cols.two{grid-template-columns:1fr 1fr}
+.crit .col{border-top:4px solid var(--red);padding-top:24px;display:flex;flex-direction:column;gap:16px}
+.crit .col.gray{border-top-color:#969fa8}
+.crit .col h3{font:500 34px/42px var(--compact)}
+.crit .col ul{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:14px}
+.crit .col li{font:400 24px/34px var(--body);padding-left:24px;position:relative}
+.crit .col li::before{content:"";position:absolute;left:0;top:14px;width:9px;height:9px;border-radius:50%;background:var(--red)}
+.crit .col.gray li::before{background:#969fa8}
+.crit .col li .num{font-weight:500;font-family:var(--compact)}
+.crit .col li small{display:block;font:400 18px/26px var(--body);color:var(--muted);margin-top:2px}
+.crit .callout{border-left:4px solid var(--red);padding:4px 0 4px 22px;font:400 24px/34px var(--body);max-width:1400px}
+.crit .callout b{font-weight:500}
+.crit .chips{display:flex;flex-wrap:wrap;gap:10px}
+.crit .chips span{font:500 20px/28px var(--compact);background:var(--soft);border-radius:8px;padding:5px 14px}
+.crit .chips span em{font-style:normal;color:var(--red);margin-left:8px}
+.crit .mapgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px 40px}
+.crit .mapitem{display:grid;grid-template-columns:48px 1fr;gap:6px 16px;padding:14px 0;border-bottom:1px solid var(--line)}
+.crit .mapitem .st{font:500 26px/32px var(--compact)}
+.crit .mapitem h4{font:500 22px/30px var(--compact)}
+.crit .mapitem p{font:400 18px/26px var(--body);color:var(--muted);margin:0;grid-column:2}
+.crit .ok{color:#1b9388}.crit .warn{color:#b16c19}.crit .no{color:var(--red)}
+</style></head>
+<body>
+<nav class="toolbar" aria-label="Управление презентацией">
+  <span class="toolbar__brand">MWS / one-zero-eight · под критерии</span>
+  <label class="sr-only" for="slide-select">Выбор слайда</label><select id="slide-select"></select>
+  <button class="tool" id="prev" aria-label="Предыдущий слайд">←</button><span class="toolbar__count" id="counter" aria-live="polite"></span><button class="tool" id="next" aria-label="Следующий слайд">→</button>
+  <span class="toolbar__spacer"></span>
+  <label class="sr-only" for="series-count">Количество кривых</label><select id="series-count" hidden><option value="5" selected>5</option></select>
+  <button class="tool" id="overview" aria-pressed="false">Обзор</button><button class="tool" id="fullscreen">На весь экран</button><button class="tool tool--primary" id="print">Печать / PDF</button>
+</nav>
+<p class="hint">Черновик слайдов под критерии оценивания · ← → переключают слайды · в основную презентацию не включены</p>
+<main class="deck">
+
+<!-- 1 · СИЛЬНЫЕ СТОРОНЫ И ОГРАНИЧЕНИЯ  (обязательный пункт состава презентации) -->
+<div class="slide-shell" data-name="Сильные стороны и ограничения"><section class="slide crit" data-master="spec">
+  <header class="topline"><p class="eyebrow">Честная оценка</p><span class="master-label">Сильные стороны и ограничения</span></header>
+  <h2 class="slide-title">Сильные стороны и ограничения</h2>
+  <div class="slide-body cols two">
+    <div class="col">
+      <h3>Что получилось</h3>
+      <ul>
+        <li>Ансамбль проходит планку по всем пяти метрикам: F1 <span class="num">0,642</span> (OOF) против <span class="num">0,356</span> у baseline<small>1,29 млрд параметров против 744 млрд, около 40 млрд активных на токен</small></li>
+        <li>Ансамбль сильнее каждой части: precision <span class="num">0,758</span> против 0,64 у GLiNER и 0,57 у Gemma</li>
+        <li><span class="num">ticket_status</span> решён: recall 0,99, precision 0,92, пропусков 3 из 400</li>
+        <li>Нарушений выходной схемы нет ни в одном прогоне</li>
+      </ul>
+    </div>
+    <div class="col gray">
+      <h3>Ограничения</h3>
+      <ul>
+        <li>GLiNER в одиночку не проходит гейт: temporal <span class="num">0,394</span> при пороге 0,451</li>
+        <li>CPU-инференс медленный: <span class="num">33–102 с</span> на звонок, пик памяти около 9 ГБ<small>на GPU (V100, batch 16) около 2,7 с на звонок</small></li>
+        <li>Шум снижает полноту: recall <span class="num">0,58 → 0,41</span> при сильном шуме, точность держится около 0,75</li>
+        <li>Пропуски по <span class="num">action</span> (recall 0,42) и <span class="num">agreement</span> (0,37); даты у service_state и tariff</li>
+      </ul>
+    </div>
+  </div>
+  <p class="src">Источник: <b>ml/docs/RESOURCES_QUALITY.md</b> · val, 383 звонка, оценщик v2.1</p>
+</section></div>
+
+<!-- 2 · УСТОЙЧИВОСТЬ К ШУМУ  (критерий 2: adversarial) -->
+<div class="slide-shell" data-name="Устойчивость к шуму" hidden><section class="slide crit" data-master="comparison">
+  <header class="topline"><p class="eyebrow">Adversarial-подмножество</p><span class="master-label">Устойчивость к шуму</span></header>
+  <h2 class="slide-title">Устойчивость к шуму: точность держится, полнота падает</h2>
+  <p class="lead">Ансамбль на срезах val с добавленным ASR-шумом. Чем сильнее шум, тем больше пропусков; точность (P) держится около 0,75.</p>
+  <div class="slide-body" style="justify-content:flex-start">
+    <table class="t">
+      <thead><tr><th>уровень шума</th><th class="n">P</th><th class="n">R</th><th class="n">F1</th><th class="n">temporal</th><th class="n">state</th><th class="n">grounding</th></tr></thead>
+      <tbody>
+        <tr><td>0,25 · данные кейса</td><td class="n">0,745</td><td class="n">0,580</td><td class="n"><b>0,652</b></td><td class="n">0,500</td><td class="n">0,642</td><td class="n">0,792</td></tr>
+        <tr><td>0,45</td><td class="n">0,757</td><td class="n">0,527</td><td class="n"><b>0,621</b></td><td class="n">0,478</td><td class="n">0,508</td><td class="n">0,762</td></tr>
+        <tr><td>0,65</td><td class="n">0,746</td><td class="n">0,469</td><td class="n"><b>0,576</b></td><td class="n">0,509</td><td class="n">0,508</td><td class="n">0,691</td></tr>
+        <tr class="hl"><td>0,85 · самый сильный</td><td class="n">0,771</td><td class="n">0,406</td><td class="n"><b>0,532</b></td><td class="n">0,633</td><td class="n">0,508</td><td class="n">0,702</td></tr>
+      </tbody>
+    </table>
+    <p class="callout" style="margin-top:18px;font-size:22px;line-height:31px">F1 теряет <b>0,077</b> на шуме 0,65 и <b>0,121</b> на 0,85; <b>state</b> падает с 0,642 до 0,508. Больше всего страдают <b>service_state</b> (recall 0,51 → 0,29) и <b>tariff</b> (0,82 → 0,47); меньше всех — <b>ticket_status</b> (1,00 → 0,88).</p><p class="callout" style="margin-top:14px;border-left-color:#969fa8;color:var(--muted);font-size:22px;line-height:31px">Рост <b>temporal</b> с шумом (0,500 → 0,633) не стоит читать как улучшение: на каждом срезе только 40 звонков, оценка шумная. Причину мы не выясняли.</p>
+  </div>
+  <p class="src">Ансамбль на CPU, <b>первые 40 звонков val</b> на каждом срезе (все 383 × 4 заняли бы около 40 часов), поэтому метрики шумные. grounding_span на шуме не измеряется.</p>
+</section></div>
+
+<!-- 3 · РЕСУРСЫ  (критерий 2: замеры по единой методике) -->
+<div class="slide-shell" data-name="Замеры ресурсов" hidden><section class="slide crit" data-master="comparison">
+  <header class="topline"><p class="eyebrow">Единая методика замеров</p><span class="master-label">Ресурсы</span></header>
+  <h2 class="slide-title">Замеры ресурсов: GPU быстро, CPU медленно</h2>
+  <div class="slide-body" style="justify-content:flex-start">
+    <table class="t">
+      <thead><tr><th>конфигурация</th><th class="n">звонков</th><th class="n">GPU-с / звонок</th><th class="n">с на звонок</th><th class="n">пик VRAM, ГБ</th><th class="n">пик RSS, ГБ</th></tr></thead>
+      <tbody>
+        <tr><td>GLiNER · GPU · batch 16</td><td class="n">383</td><td class="n">1,0</td><td class="n">1,1</td><td class="n">6,7</td><td class="n">3,2</td></tr>
+        <tr><td>Gemma · GPU · batch 16</td><td class="n">383</td><td class="n">2,07</td><td class="n">2,07</td><td class="n">6,3</td><td class="n">3,0</td></tr>
+        <tr class="hl"><td><b>Ансамбль · GPU · batch 16</b></td><td class="n">383</td><td class="n"><b>2,65</b></td><td class="n">2,90</td><td class="n">8,8</td><td class="n">3,7</td></tr>
+        <tr><td>Ансамбль · GPU · batch 1</td><td class="n">5</td><td class="n">14,6</td><td class="n">14,9</td><td class="n">5,4</td><td class="n">3,6</td></tr>
+        <tr><td>Ансамбль · CPU 16 ядер</td><td class="n">5</td><td class="n dim">—</td><td class="n">40,5</td><td class="n dim">—</td><td class="n">8,85</td></tr>
+        <tr><td>Ансамбль · CPU 8 ядер</td><td class="n">40</td><td class="n dim">—</td><td class="n">102</td><td class="n dim">—</td><td class="n">9,2</td></tr>
+      </tbody>
+    </table>
+    <p class="callout" style="margin-top:22px">Скорость даёт <b>батч на GPU</b>: 2,65 с на звонок при batch 16 против 14,6 с при batch 1. На CPU один звонок занимает <b>33–102 с</b>, пик памяти около 9 ГБ.</p>
+  </div>
+  <p class="src">Методика <b>cfe/bench.py</b>: прогрев на двух звонках не входит, загрузка моделей не входит, VRAM — <b>torch.cuda.max_memory_allocated</b>. Нагрузка сервера в прогонах была разной (4 контейнера против 1), поэтому 40 с и 102 с на CPU нельзя сравнивать как ускорение. Веса 2,05 ГБ; образы cfe-cpu 14,2 ГБ, cfe-gpu 63,5 ГБ.</p>
+</section></div>
+
+<!-- 4 · РАЗБОР ОШИБОК ПО ТИПАМ ФАКТОВ  (критерий 3) -->
+<div class="slide-shell" data-name="Разбор ошибок по типам фактов" hidden><section class="slide crit" data-master="comparison">
+  <header class="topline"><p class="eyebrow">Разбор ошибок</p><span class="master-label">По типам фактов</span></header>
+  <h2 class="slide-title">Ошибки по типам фактов: статусы решены, договорённости — слабое место</h2>
+  <div class="slide-body" style="justify-content:flex-start">
+    <table class="t">
+      <thead><tr><th>тип факта</th><th class="n">gold</th><th class="n">precision</th><th class="n">recall</th><th class="n">пропусков</th><th class="n">лишних</th><th class="n">верные даты</th><th class="n">верная реплика</th></tr></thead>
+      <tbody>
+        <tr><td><b>ticket_status</b></td><td class="n">400</td><td class="n">0,923</td><td class="n good"><b>0,993</b></td><td class="n">3</td><td class="n">33</td><td class="n">0,495</td><td class="n">0,899</td></tr>
+        <tr><td><b>tariff</b></td><td class="n">146</td><td class="n">0,608</td><td class="n">0,808</td><td class="n">28</td><td class="n">76</td><td class="n bad">0,253</td><td class="n">0,771</td></tr>
+        <tr><td><b>service_state</b></td><td class="n">453</td><td class="n">0,784</td><td class="n">0,442</td><td class="n bad">253</td><td class="n">55</td><td class="n bad">0,326</td><td class="n">0,850</td></tr>
+        <tr><td><b>action</b></td><td class="n">368</td><td class="n">0,716</td><td class="n bad">0,418</td><td class="n bad">214</td><td class="n">61</td><td class="n dim">—</td><td class="n">0,955</td></tr>
+        <tr class="hl"><td><b>agreement</b></td><td class="n">478</td><td class="n">0,632</td><td class="n bad"><b>0,370</b></td><td class="n bad"><b>301</b></td><td class="n">103</td><td class="n">0,867</td><td class="n bad"><b>0,412</b></td></tr>
+      </tbody>
+    </table>
+    <div class="cols two" style="margin-top:26px;gap:40px;flex:none">
+      <p class="callout"><b>Статические атрибуты</b> (ticket_status, tariff) решены лучше всего. <b>Изменения состояния во времени</b> хуже: даты у service_state и tariff верны в 0,33 и 0,25 случаев.</p>
+      <p class="callout"><b>agreement</b> — главный резерв: договорённость проговаривается в нескольких репликах, а gold привязывает её к другой, чем модель. Из 301 пропуска в 141 звонке факта этого типа нет вообще.</p>
+    </div>
+  </div>
+  <p class="src">Ансамбль ens-v3, полный val, 383 звонка, 1845 gold-фактов · ml/docs/RESOURCES_QUALITY.md</p>
+</section></div>
+
+<!-- 5 · ИДЕИ ПО УЛУЧШЕНИЮ  (критерий 5: недостающие пункты) -->
+<div class="slide-shell" data-name="Новые атрибуты и проверка спорных фактов" hidden><section class="slide crit" data-master="spec">
+  <header class="topline"><p class="eyebrow">Развитие</p><span class="master-label">Идеи по улучшению</span></header>
+  <h2 class="slide-title">Развитие: новые атрибуты и проверка спорных фактов</h2>
+  <div class="slide-body cols two">
+    <div class="col">
+      <h3>Выборочная проверка спорных фактов крупной моделью</h3>
+      <ul>
+        <li>Если GLiNER и Gemma <b>разошлись</b> или реранкер не уверен, звонок отдаётся крупной модели. Остальные не тратят ресурс.</li>
+        <li>Это тот же механизм, что в развилке «Модели согласны?» и в каскадном роутере: крупная модель нужна только на спорных случаях.</li>
+        <li>Подтверждённые ей факты возвращаются в обучающую выборку.</li>
+      </ul>
+    </div>
+    <div class="col">
+      <h3>Новые типы атрибутов</h3>
+      <ul>
+        <li>Новый атрибут — это новая запись в каталоге, а не новая архитектура: span-энкодер типа GLiNER работает с произвольными типами сущностей.</li>
+        <li>Нужно описать атрибут и дообучить LoRA-адаптер на примерах — их можно получить тем же отбором по уверенности, без ручной разметки.</li>
+        <li>Тот же приём, что для нового языка: каталог + адаптер. Это предложение: на новых атрибутах мы его не проверяли.</li>
+      </ul>
+    </div>
+  </div>
+  <p class="src">Критерий 5: self-training, выборочная проверка спорных фактов крупной моделью, новые типы атрибутов, многоязычность.</p>
+</section></div>
+
+<!-- 6 · КРИТЕРИИ И ГДЕ ИХ ИСКАТЬ -->
+<div class="slide-shell" data-name="Критерии и слайды" hidden><section class="slide crit" data-master="comparison">
+  <header class="topline"><p class="eyebrow">Критерии оценивания</p><span class="master-label">Критерии и слайды</span></header>
+  <h2 class="slide-title">Что оценивает жюри и где это показано</h2>
+  <div class="slide-body" style="justify-content:flex-start">
+    <table class="t">
+      <thead><tr><th>критерий</th><th>что требуется</th><th>где показано</th></tr></thead>
+      <tbody>
+        <tr><td><b>1 · Качество решения</b></td><td>падение temporal и state не больше 0,02; параметров меньше в 10 раз</td><td>«Гейты кейса»: ансамбль +0,022 temporal, +0,037 state · 1,29 млрд против 744 млрд</td></tr>
+        <tr><td><b>2 · Техническая реализация</b></td><td>воспроизводимость, схема на 100%, замеры по единой методике, шум</td><td>«Замеры ресурсов», «Устойчивость к шуму» · схема без нарушений · Docker, seed 42, sha256 входов</td></tr>
+        <tr><td><b>3 · Глубина проработки</b></td><td>разбор по типам фактов, выбор архитектуры, кривая ресурсы × качество</td><td>«Ошибки по типам фактов», «Архитектура», «Ресурсы × качество»</td></tr>
+        <tr><td><b>4 · Презентация и защита</b></td><td>архитектура, обучение, сравнение с baseline, сильные стороны и ограничения, предложения, демонстрация</td><td>«Архитектура», «Как обучали», «Сильные стороны и ограничения», «Предложения по дообучению», «Демонстрация»</td></tr>
+        <tr><td><b>5 · Идеи по улучшению</b></td><td>self-training, проверка спорных фактов крупной моделью, новые атрибуты, многоязычность</td><td>«Предложения по дообучению», «Новые атрибуты и проверка спорных фактов», «Многоязычность»</td></tr>
+      </tbody>
+    </table>
+    <p class="callout" style="margin-top:24px;border-left-color:#969fa8"><b>Что остаётся слабым:</b> CPU-инференс 33–102 с на звонок; полнота на сильном шуме; GLiNER один не проходит гейт; побитового совпадения весов нет.</p>
+  </div>
+  <p class="src">Критерии: МТС MWS CompactFactExtraction · 5 критериев по 10 баллов</p>
+</section></div>
+
+</main>
+<div class="toast" id="toast" role="status"></div>
+<script src="data.js"></script><script src="charts.js"></script><script src="deck.js"></script>
+</body></html>
