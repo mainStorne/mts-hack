@@ -1,0 +1,15 @@
+{
+ "tau": 0.8,
+ "tau_attr": {
+  "service_state": 0.9,
+  "tariff": 0.5,
+  "ticket_status": 0.5,
+  "action": 0.7,
+  "agreement": 0.8
+ },
+ "snap_th": 0.5,
+ "date_tau": null,
+ "dev_f1": 0.5602,
+ "dev_gate_ok": false,
+ "fixed_from": null
+}

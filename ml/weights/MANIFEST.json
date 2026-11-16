@@ -1,0 +1,116 @@
+{
+ "gemma_params": 999885952,
+ "gliner_params": 290768615,
+ "sources": {
+  "gemma_base": "/opt/mts_hack/shared/mts_experiments/gemma3_1b/models/gemma-3-1b-it",
+  "gemma_adapter": "/opt/mts_hack/ml-gemma/adapters/gemma-v21-targeted-gen/adapter",
+  "gliner_adapter": "runs/struct-lora",
+  "gliner_params": "runs/struct-lora-v21/params.json",
+  "ensemble": "runs/ens-v3/params.json",
+  "gliner_base": "fastino/gliner2.5-multi-v1@7b005274e82da37dcf1f5fd9d6a2ef413c6a004c"
+ },
+ "versions": {
+  "torch": "2.14.1+cu126",
+  "transformers": "5.23.0",
+  "peft": "0.21.3",
+  "gliner2": "2.1.0"
+ },
+ "files": {
+  "gliner-params.json": {
+   "sha256": "3ea27600a6ab44dfb31d8761701b18ccfb472d2d9950fe634209ef3c945dfd5d",
+   "bytes": 234
+  },
+  "ensemble-params.json": {
+   "sha256": "e38891bbebdd74eb6cecf0d6768499bcbe3d7570bbf2254141df0d416d6e1f2b",
+   "bytes": 4015
+  },
+  "hf/hub/CACHEDIR.TAG": {
+   "sha256": "f6572428f6d5e1575e73a1502895a8731f10757dfbb634909c6e154b849af91d",
+   "bytes": 191
+  },
+  "hf/hub/.locks/models--fastino--gliner2.5-multi-v1/6c9e655483d7cb7b6e128d0b93c1614aad048d573bdbfd29fabc22cc2adaa13d.lock": {
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "bytes": 0
+  },
+  "hf/hub/.locks/models--fastino--gliner2.5-multi-v1/428f13aa08f1aa12370c4a644f235ddc46db85e429a1dee6a8d22ead095f2183.lock": {
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "bytes": 0
+  },
+  "hf/hub/.locks/models--fastino--gliner2.5-multi-v1/4def6e4eda6a2152567f4046bc65536ef0938585.lock": {
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "bytes": 0
+  },
+  "hf/hub/.locks/models--fastino--gliner2.5-multi-v1/8c007d142de357021db193f1965b7437516fa720.lock": {
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "bytes": 0
+  },
+  "hf/hub/.locks/models--fastino--gliner2.5-multi-v1/0bb5e495baad2e7fdc35500f0072d5f2d957ed5a.lock": {
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "bytes": 0
+  },
+  "hf/hub/.locks/models--fastino--gliner2.5-multi-v1/c1ff4ec0bc00031c15530b8f3c33d3677f27949e6a0cb52e1247a6224b6c5395.lock": {
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "bytes": 0
+  },
+  "hf/hub/.locks/models--fastino--gliner2.5-multi-v1/a0bc84ab80e2a8a9ed0687f9845dbf5bd6a0caad.lock": {
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "bytes": 0
+  },
+  "hf/hub/.locks/models--fastino--gliner2.5-multi-v1/5990b5ca35d31b9ec71f013095feb5789fe53147.lock": {
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "bytes": 0
+  },
+  "hf/hub/.locks/models--fastino--gliner2.5-multi-v1/c62446df87ae18ec98b133f8f84fc449a07cc89bbf8ef192a4cb5f9c53777a7a.lock": {
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "bytes": 0
+  },
+  "hf/hub/.locks/models--fastino--gliner2.5-multi-v1/5efd586306801b08ca13390b0619a94c943046e4.lock": {
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "bytes": 0
+  },
+  "hf/hub/models--fastino--gliner2.5-multi-v1/trees/7b005274e82da37dcf1f5fd9d6a2ef413c6a004c.json": {
+   "sha256": "819208d9464d58e474052cb84f2791094c193b17dea228fcc05a8d87818a842b",
+   "bytes": 1856
+  },
+  "gemma-merged/chat_template.jinja": {
+   "sha256": "7de1c58e208eda46e9c7f86397df37ec49883aeece39fb961e0a6b24088dd3c4",
+   "bytes": 1532
+  },
+  "gemma-merged/tokenizer.json": {
+   "sha256": "daab2354f8a74e70d70b4d1f804939b68a8c9624dd06cb7858e52dd8970e9726",
+   "bytes": 33384567
+  },
+  "gemma-merged/config.json": {
+   "sha256": "33a332614d35ad40b9e9e1d066faea17d92635c2589d06d168df8d29eec1620e",
+   "bytes": 1775
+  },
+  "gemma-merged/model.safetensors": {
+   "sha256": "bb76bb409ee72760c38b27cfbd7d152ebaeb01de5dcad4270cfb64d2640d3b42",
+   "bytes": 1999810864
+  },
+  "gemma-merged/tokenizer_config.json": {
+   "sha256": "e8d2a8cd75e50a9112fed9e92680732dca8b8928895c7d2bb1e9bfc5031c6eec",
+   "bytes": 744
+  },
+  "gemma-merged/generation_config.json": {
+   "sha256": "3387749ef5561e9565457abadc18c657c78c20d68f896d087d8a5f4c381278c2",
+   "bytes": 210
+  },
+  "gliner-lora/best/adapter_config.json": {
+   "sha256": "9c7015f50f69aa776fcba7f3d96cbcb50c248ca786f9a69ffe6dacbd2bbc6310",
+   "bytes": 2440
+  },
+  "gliner-lora/best/README.md": {
+   "sha256": "cc6f11808fa558455a80a08746ac7b0358fa0f152daf96e05e07399b1d651b81",
+   "bytes": 5176
+  },
+  "gliner-lora/best/adapter_model.safetensors": {
+   "sha256": "97a20b761ade525700027b606f48758670e5c02a2ed1ddc00ff372276553ff63",
+   "bytes": 13691656
+  }
+ },
+ "gpu_base_digest": {
+  "cfe-gpu:1.0": "vllm/vllm-openai@sha256:d825baf9ce4b1b6bfc5ecc7b79880c7e6748c65a72d697ce3d47607aafa84c6e",
+  "cfe-gpu:1.0-v100": "xzwgx/v100-vllm:1.5.1@sha256:71d5a20f6c0c71a77ddaab6b46708f1b5d728246bb2ca0a1674a159cf02dd955"
+ }
+}

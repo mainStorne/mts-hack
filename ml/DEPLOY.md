@@ -6,7 +6,7 @@
 ## Что поставляется
 | артефакт | где |
 |---|---|
-| веса и конфигурация инференса | `models/` (`gemma-merged/`, `gliner-lora/`, `hf/` — база GLiNER, `gliner-params.json`, `ensemble-params.json`, `MANIFEST.json` с sha256 и версиями) |
+| веса (адаптеры, пороги, реранкер) | `weights/` в git; слитая Gemma — релиз GitHub `weights-v1`; полный каталог `models/` (`gemma-merged/`, `gliner-lora/`, `hf/` — база GLiNER, `gliner-params.json`, `ensemble-params.json`, `MANIFEST.json` с sha256 и версиями) |
 | образ CPU (amd64) | `cfe-cpu-1.0-amd64.tar.gz` (`docker save`), веса внутри. arm64 не собран: на сервере нельзя включить QEMU (binfmt не регистрируется без root) |
 | образ GPU | `cfe-gpu:1.0-v100` (1Cat vLLM для V100), `cfe-gpu:1.0` (обычный GPU, vLLM) |
 | код обучения, сиды | `cfe/struct_train.py` (seed 42), `gemma/train.py` (seed 42), `repro.sh`, `repro/README.md` |
