@@ -13,6 +13,10 @@ logo='data:image/svg+xml;base64,'+base64.b64encode((root/'mws-mark.svg').read_by
 html=html.replace('src="mws-mark.svg"','src="'+logo+'"')
 chart='data:image/svg+xml;base64,'+base64.b64encode((root/'resources-quality.svg').read_bytes()).decode()
 html=html.replace('src="resources-quality.svg"','src="'+chart+'"')
+import glob
+for f in sorted(glob.glob(str(root/'assets/team/*.png'))):
+    rel='assets/team/'+Path(f).name
+    html=html.replace('src="'+rel+'"','src="data:image/png;base64,'+base64.b64encode(Path(f).read_bytes()).decode()+'"')
 for name in ['data.js','charts.js','deck.js']:
     js=(root/name).read_text().replace('</script','<\\/script')
     html=html.replace('<script src="'+name+'"></script>','<script>\n'+js+'\n</script>')

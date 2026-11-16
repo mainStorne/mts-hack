@@ -95,6 +95,11 @@ pre.code{margin:0;background:var(--soft);border-radius:10px;padding:16px 22px;fo
 .mini td:first-child{font-weight:500}.mini b{font-weight:700}.mini small{color:var(--muted);font-size:16px}
 .kpi-row{display:flex;gap:18px;flex-wrap:wrap}.kpi{background:var(--soft);border-radius:10px;padding:10px 18px;font:500 21px/28px var(--compact)}.kpi span{display:block;font:400 15px/20px var(--body);color:var(--muted)}
 .slide h4{font:500 24px/32px var(--compact);margin:2px 0 6px}
+.team-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:40px;flex:1;align-items:start;padding-top:18px}
+.team-card{display:flex;flex-direction:column;align-items:center;text-align:center;gap:14px}
+.team-card img{width:236px;height:236px;border-radius:50%;object-fit:cover;border:3px solid var(--line)}
+.team-card h3{font:500 34px/40px var(--compact);margin-top:8px}
+.team-card p{font:400 22px/31px var(--body);color:var(--muted);max-width:330px}
 </style></head>
 <body>
 <nav class="toolbar" aria-label="Управление презентацией">
@@ -115,6 +120,20 @@ pre.code{margin:0;background:var(--soft);border-radius:10px;padding:16px 22px;fo
   <div class="cover__content"><div class="cover__rule"></div><h1 class="cover__title">Компактная модель<br>извлечения фактов из звонков</h1>
       <p class="cover__meta">Команда one-zero-eight<br><span>Innopolis Global Hack · 13–16 ноября 2026</span></p></div>
   <footer class="slide-footer"><span class="slide-footer__source">Кейс MTS MWS CompactFactExtraction</span><span class="page-number"></span></footer>
+</section></div>
+
+<!-- КОМАНДА -->
+<div class="slide-shell" data-name="Команда" hidden><section class="slide" data-master="spec">
+  <header class="topline"><p class="eyebrow">Команда</p><span class="master-label">one-zero-eight</span></header>
+  <h2 class="slide-title">Команда one-zero-eight</h2>
+  <p class="subtitle">Innopolis Global Hack · 13–16 ноября 2026 · кейс MTS MWS CompactFactExtraction</p>
+  <div class="slide-body team-grid">
+    <div class="team-card"><img src="assets/team/dima.png" alt="Дмитрий"><h3>Дмитрий</h3><p>ML-трек: обучение LoRA-экстракторов, ансамбль, замеры, образы и воспроизводимость</p></div>
+    <div class="team-card"><img src="assets/team/nikita.png" alt="Никита"><h3>Никита</h3><p>питч, исследование отчётов, обучение v2/v3, экономика решения</p></div>
+    <div class="team-card"><img src="assets/team/nastya.png" alt="Настя"><h3>Настя</h3><p>разбор кейса и данных, временные интервалы, кодек Gemma</p></div>
+    <div class="team-card"><img src="assets/team/max.png" alt="Максим"><h3>Максим</h3><p>оценка качества, экономическое обоснование, мультиязычность</p></div>
+  </div>
+  <footer class="slide-footer"><span class="slide-footer__source">Команда one-zero-eight · MTS MWS · Innopolis Global Hack</span><span class="page-number"></span></footer>
 </section></div>
 
 <!-- 02 · ПРОБЛЕМА -->
