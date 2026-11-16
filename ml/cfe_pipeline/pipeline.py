@@ -174,7 +174,7 @@ def canon_tickets(tickets):
     return [(t, full[n]) for t, n in tickets]
 
 
-def assemble(d, cands, probs, objs, tickets, thr, rankers=None):
+def assemble(d, cands, probs, objs, tickets, thr, rankers=None, anchor_attrs=None, date_rank=True):
     call_dt = datetime.fromisoformat(d["started_at"]); base = call_dt.date()
     tickets = canon_tickets(tickets)
     groups = collections.defaultdict(list)
@@ -188,7 +188,7 @@ def assemble(d, cands, probs, objs, tickets, thr, rankers=None):
         # якорь — первое уверенное упоминание; при наличии обученного выбора — лучшая реплика из окрестности
         c = min((c for q, c in ms if q >= 0.5 * p), key=lambda c: c["turn"])
         ti = c["turn"]
-        if rankers and "anchor" in rankers:
+        if rankers and "anchor" in rankers and (anchor_attrs is None or attr in anchor_attrs):
             ti = choose(rankers["anchor"], anchor_options(d, [m["turn"] for q, m in ms if q >= 0.5 * p], attr))
         t = d["turns"][ti]
         if attr == "ticket_status":
@@ -209,7 +209,7 @@ def assemble(d, cands, probs, objs, tickets, thr, rankers=None):
     # в разговоре не называется (в эталоне — произвольная дата): такой факт не выдаём, полно заполнить его нельзя
     if ABSTAIN_PAST_NORMAL and any(f["attribute"] == "service_state" and "нормально" not in f["value"] for f in facts):
         facts = [f for f in facts if not (f["attribute"] == "service_state" and f["value"] == "работает нормально")]
-    agr = (lambda f: choose(rankers["date_from"], DS.date_options(d, f["_c"]))) if rankers else None
+    agr = (lambda f: choose(rankers["date_from"], DS.date_options(d, f["_c"]))) if rankers and date_rank else None
     DLG.set_dates(d, facts, key_fn=lambda f: f["object"]["name"], agreement_from=agr)
     for f in facts:
         f.pop("_pos", None); f.pop("_c", None); f.pop("_mentions", None)
@@ -224,7 +224,8 @@ def predict_calls(model, calls):
     for d in calls:
         cands, feats, objs, tickets = mentions(d, gen)
         probs = model["clf"].predict_proba(model["vec"].transform(feats))[:, 1] if feats else []
-        facts = assemble(d, cands, probs, objs, tickets, model["thr"], model.get("rankers"))
+        facts = assemble(d, cands, probs, objs, tickets, model["thr"], model.get("rankers"),
+                         model.get("anchor_attrs"), model.get("date_rank", True))
         out.append({"call_id": d["call_id"], "started_at": d["started_at"], "facts": facts})
     return out
 
