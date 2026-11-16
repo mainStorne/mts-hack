@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="ru">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>CompactFactExtraction · Питч</title><link rel="stylesheet" href="masters.css"></head>
+<body>
+<nav class="toolbar" aria-label="Управление презентацией">
+  <span class="toolbar__brand">MWS / CompactFactExtraction</span>
+  <label class="sr-only" for="slide-select">Выбор слайда</label><select id="slide-select"></select>
+  <button class="tool" id="prev" aria-label="Предыдущий слайд">←</button><span class="toolbar__count" id="counter" aria-live="polite"></span><button class="tool" id="next" aria-label="Следующий слайд">→</button>
+  <span class="toolbar__spacer"></span>
+  <label class="sr-only" for="series-count">Количество кривых</label><select id="series-count" title="Количество кривых на текущем слайде" hidden><option value="3">3 кривые</option><option value="4">4 кривые</option><option value="5" selected>5 кривых</option></select>
+  <button class="tool" id="overview" aria-pressed="false">Обзор</button><button class="tool" id="fullscreen">На весь экран</button><button class="tool tool--primary" id="print">Печать / PDF</button>
+</nav>
+<p class="hint">← → переключают слайды · «Обзор» показывает все слайды · «Печать / PDF» — экспорт деки</p>
+<noscript><p class="noscript">Для навигации включите JavaScript. Текст слайдов доступен ниже.</p><style>.slide-shell[hidden]{display:block}.slide-shell{overflow:auto}.slide{transform:none}</style></noscript>
+<main class="deck">
+
+<!-- 01 · COVER -->
+<div class="slide-shell" data-name="Титульный"><section class="slide cover" data-master="cover">
+  <header class="topline"><div class="brand"><img src="mws-mark.svg" alt="MWS">MWS Cloud Platform</div><span class="master-label">Кейс MTS MWS</span></header>
+  <div class="cover__content"><div class="cover__rule"></div><h1 class="cover__title">Компактная модель<br>извлечения фактов из звонков</h1><p class="cover__sub">Ансамбль GLiNER и Gemma извлекает структурированные факты из разговоров оператора и клиента не хуже большой LLM — и стоит в разы дешевле</p><p class="cover__meta">Команда CompactFactExtraction<br><span>Innopolis Global Hack · 13–16 ноября 2026</span></p></div>
+  <footer class="slide-footer"><span class="slide-footer__source">Кейс MTS MWS CompactFactExtraction</span><span class="page-number"></span></footer>
+</section></div>
+
+<!-- 02 · ПРОБЛЕМА -->
+<div class="slide-shell" data-name="Проблема" hidden><section class="slide" data-master="findings">
+  <header class="topline"><p class="eyebrow">Зачем это нужно</p><span class="master-label">01 / Проблема</span></header>
+  <h2 class="slide-title">Проблема стоит не в токенах — а в операторах</h2>
+  <div class="slide-body results-layout"><div><p class="hero-metric">932 ₽</p><p class="hero-metric-label">стоимость часа оператора контакт-центра</p><p class="metric-note">≈ 124 ₽ на один звонок при средней<br>длительности обработки 8 минут<br>· оценка по тарифам аутсорсинга КЦ</p></div><ol class="findings"><li><span class="finding-number">01</span><div><h3 class="finding-title">Заявка пишется вручную</h3><p class="finding-text">После разговора с клиентом оператор сам составляет заявку — процесс удлиняется на каждом обращении.</p></div></li><li><span class="finding-number">02</span><div><h3 class="finding-title">Время масштабируется с потоком</h3><p class="finding-text">Тысячи звонков в день превращают ручную обработку в колоссальные человеко-часы поддержки.</p></div></li><li><span class="finding-number">03</span><div><h3 class="finding-title">LLM справляется — но дорого</h3><p class="finding-text">Большая модель извлекает факты качественно, но цена каждого звонка складывается в миллионы рублей в год. Наша задача — решить её дёшево.</p></div></li></ol></div>
+  <footer class="slide-footer"><span class="slide-footer__source">Оценка команды по тарифам контакт-центров и прайсам LLM-провайдеров</span><span class="page-number"></span></footer>
+</section></div>
+
+<!-- 03 · ЗАДАЧА КЕЙСА -->
+<div class="slide-shell" data-name="Задача кейса" hidden><section class="slide" data-master="spec">
+  <header class="topline"><p class="eyebrow">Что за кейс</p><span class="master-label">02 / Задача</span></header>
+  <h2 class="slide-title">Компактные факты из шумного ASR-транскрипта</h2>
+  <div class="slide-body"><div class="two-plots">
+    <div class="two-plots__panel">
+      <h3 class="panel-title">Что извлекаем</h3>
+      <div class="spec-rows">
+        <p class="spec-row"><b>Факт</b> — объект, атрибут, значение, полярность</p>
+        <p class="spec-row"><b>Интервал</b> — valid_from / valid_to: когда действует</p>
+        <p class="spec-row"><b>Источник</b> — source.turn_idx: номер реплики-источника</p>
+      </div>
+      <h3 class="panel-title" style="margin-top:24px">Пять атрибутов</h3>
+      <div class="attr-list"><span>service_state</span><span>tariff</span><span>ticket_status</span><span>action</span><span>agreement</span></div>
+      <h3 class="panel-title" style="margin-top:24px">Где сложность</h3>
+      <div class="spec-rows">
+        <p class="spec-row">ASR-шум: ~25% слов распознаны неверно</p>
+        <p class="spec-row">Относительные даты: «со вторника», «месяц назад»</p>
+        <p class="spec-row">Цепочки состояний: новое значение закрывает старое</p>
+      </div>
+    </div>
+    <div class="two-plots__panel">
+      <h3 class="panel-title">Бейзлайн glm-5.3 · оценщик v2.1</h3>
+      <table class="comparison comparison--compact"><thead><tr><th scope="col">Метрика</th><th scope="col">Значение</th></tr></thead><tbody>
+        <tr><td>Precision</td><td>0,335</td></tr>
+        <tr><td>Recall</td><td>0,381</td></tr>
+        <tr><td>F1</td><td>0,356</td></tr>
+        <tr><td>Temporal recall</td><td>0,471</td></tr>
+        <tr><td>State accuracy</td><td>0,535</td></tr>
+        <tr><td>Grounding</td><td>0,784</td></tr>
+      </tbody></table>
+    </div>
+  </div>
+  <p class="bottom-note">Гейт кейса: temporal и state не ниже бейзлайна − 0,02 → пороги 0,4506 и 0,5145</p></div>
+  <footer class="slide-footer"><span class="slide-footer__source">Кейс MTS MWS CompactFactExtraction · пакет данных v2.1</span><span class="page-number"></span></footer>
+</section></div>
+
+<!-- 04 · ДЕНЬ 1 -->
+<div class="slide-shell" data-name="День 1" hidden><section class="slide" data-master="bar-chart">
+  <header class="topline"><p class="eyebrow">День 1 · первый эксперимент</p><span class="master-label">03 / День 1</span></header>
+  <h2 class="slide-title">День 1: от генерации JSON — к извлечению спанов</h2><div class="legend-inline"><span><i class="legend-dot" style="--c:#bbc1c7"></i>Бейзлайн glm-5.3</span><span><i class="legend-dot" style="--c:#ff0032"></i>GLiNER + LoRA</span></div>
+  <div class="slide-body"><figure class="plot chart-large" data-chart="bars" data-set="barsDay1" aria-label="Метрики дня 1: бейзлайн и GLiNER с LoRA"></figure><p class="bottom-note">Gemma3-1B с ходу бейзлайн не побила → ресёрч привёл к GLiNER2 (287M, mDeBERTa) + LoRA. Вывод дня: временные интервалы требуют отдельной обработки — даты выносим из модели в правила</p></div>
+  <footer class="slide-footer"><span class="slide-footer__source">Оценщик v1 · тестовая выборка · замеры команды</span><span class="page-number"></span></footer>
+</section></div>
+
+<!-- 05 · ДЕНЬ 2 -->
+<div class="slide-shell" data-name="День 2" hidden><section class="slide" data-master="bar-chart">
+  <header class="topline"><p class="eyebrow">День 2 · новые условия</p><span class="master-label">04 / День 2</span></header>
+  <h2 class="slide-title">День 2: планка выросла — сменили подход</h2><div class="legend-inline"><span><i class="legend-dot" style="--c:#bbc1c7"></i>Бейзлайн glm-5.3 (v2.1)</span><span><i class="legend-dot" style="--c:#ff0032"></i>Gemma3 + LoRA</span></div>
+  <div class="slide-body"><figure class="plot chart-large" data-chart="bars" data-set="barsDay2" aria-label="Метрики дня 2: бейзлайн и Gemma с LoRA"></figure><p class="bottom-note">Организаторы заменили данные и оценщик (v2.1): пороги гейта T ≥ 0,4506 · S ≥ 0,5145. Словарь и постобработка почти не дали роста — перешли на Gemma3 + LoRA: F1 вырос, но temporal ниже порога. Gemma и GLiNER ошибаются в разных местах → ансамбль</p></div>
+  <footer class="slide-footer"><span class="slide-footer__source">val, 383 звонка · оценщик v2.1</span><span class="page-number"></span></footer>
+</section></div>
+
+<!-- 06 · ДЕНЬ 3 -->
+<div class="slide-shell" data-name="День 3" hidden><section class="slide" data-master="roadmap">
+  <header class="topline"><p class="eyebrow">День 3 · ансамбль</p><span class="master-label">05 / День 3</span></header>
+  <h2 class="slide-title">День 3: ансамбль спасли классическим ML</h2>
+  <div class="slide-body roadmap"><article class="roadmap-step"><p class="roadmap-step__time">ШАГ 01</p><h3>Наивная склейка</h3><p>Все факты двух моделей — в один пул без отбора.</p><p class="roadmap-step__outcome">Precision 0,52 — шумно</p></article><article class="roadmap-step"><p class="roadmap-step__time">ШАГ 02</p><h3>Одиночки Gemma</h3><p>Берём только факты, которых нет у GLiNER.</p><p class="roadmap-step__outcome">Лучше, но отбора мало</p></article><article class="roadmap-step"><p class="roadmap-step__time">ШАГ 03</p><h3>Логистическая регрессия</h3><p>Реранкер кандидатов на признаках решает, чьему факту верить.</p><p class="roadmap-step__outcome">Precision 0,73</p></article><article class="roadmap-step"><p class="roadmap-step__time">ШАГ 04</p><h3>ASR-denoise</h3><p>Детерминированная чистка шума перед моделями.</p><p class="roadmap-step__outcome">Метрики упали — не в финале</p></article>
+  <p class="bottom-note" style="border:0;padding-left:0">Финал на val: precision 0,745 · recall 0,580 · F1 0,652 · temporal 0,500 · state 0,642 · grounding 0,792</p></div>
+  <footer class="slide-footer"><span class="slide-footer__source">val · оценщик v2.1</span><span class="page-number"></span></footer>
+</section></div>
+
+<!-- 07 · АРХИТЕКТУРА -->
+<div class="slide-shell" data-name="Архитектура" hidden><section class="slide" data-master="architecture">
+  <header class="topline"><p class="eyebrow">Устройство решения</p><span class="master-label">06 / Архитектура</span></header>
+  <h2 class="slide-title">Архитектура: две модели и один отбор</h2><p class="subtitle">GLiNER и Gemma работают параллельно; логистическая регрессия решает, чьи факты попадают в ответ</p>
+  <div class="slide-body"><figure class="diagram-wrap" data-chart="architecture" aria-label="Схема финального решения: ASR-транскрипт, параллельные ветки GLiNER и Gemma, логистическая регрессия, компактные факты"></figure><div class="legend-inline"><span><i class="legend-dot" style="--c:#ff0032"></i>Основной поток фактов</span><span><i class="legend-dot" style="--c:#969fa8"></i>Входные данные</span><span>Даты — детерминированный резолвер правил</span></div></div>
+  <footer class="slide-footer"><span class="slide-footer__source">Дубли остаются за GLiNER (у Gemma нет спанов) · схема финального решения</span><span class="page-number"></span></footer>
+</section></div>
+
+<!-- 08 · РЕЗУЛЬТАТЫ -->
+<div class="slide-shell" data-name="Результаты" hidden><section class="slide" data-master="findings">
+  <header class="topline"><p class="eyebrow">Итоги</p><span class="master-label">07 / Результаты</span></header>
+  <h2 class="slide-title">F1 ×1,8 к бейзлайну — оба гейта пройдены</h2>
+  <div class="slide-body results-layout"><div><p class="hero-metric">0,652</p><p class="hero-metric-label">F1 ансамбля на val · 383 звонка</p><p class="metric-note">Бейзлайн glm-5.3 — 0,356<br>рост ×1,83 · оценщик v2.1</p></div><ol class="findings"><li><span class="finding-number">01</span><div><h3 class="finding-title">Precision 0,745 — ×2,2 к бейзлайну</h3><p class="finding-text">Логистическая регрессия отсеивает шум ансамбля: почти каждый извлечённый факт — верный.</p></div></li><li><span class="finding-number">02</span><div><h3 class="finding-title">Оба гейта кейса пройдены</h3><p class="finding-text">Temporal 0,500 при пороге 0,4506 · state 0,642 при пороге 0,5145.</p></div></li><li><span class="finding-number">03</span><div><h3 class="finding-title">Grounding 0,792</h3><p class="finding-text">Каждый факт привязан к реплике-источнику — ответ проверяем по тексту звонка.</p></div></li></ol></div>
+  <footer class="slide-footer"><span class="slide-footer__source">val, 383 звонка · оценщик v2.1</span><span class="page-number"></span></footer>
+</section></div>
+
+<!-- 09 · ВЫВОДЫ -->
+<div class="slide-shell" data-name="Выводы" hidden><section class="slide" data-master="findings">
+  <header class="topline"><p class="eyebrow">Выводы</p><span class="master-label">08 / Выводы</span></header>
+  <h2 class="slide-title">Что мы поняли за три дня</h2>
+  <div class="slide-body"><ol class="findings findings--wide"><li><span class="finding-number">01</span><div><h3 class="finding-title">Постановка задачи важнее размера модели</h3><p class="finding-text">Span-извлечение на 287M параметров обошло генеративную 1B: «классификация слотов» вместо «генерации JSON» дала больше, чем смена модели.</p></div></li><li><span class="finding-number">02</span><div><h3 class="finding-title">Классический ML — самый дешёвый рычаг</h3><p class="finding-text">Логистическая регрессия поверх нейросетей подняла precision с 0,52 до 0,73 — дешевле любого дообучения.</p></div></li><li><span class="finding-number">03</span><div><h3 class="finding-title">Модели ошибаются в разных местах</h3><p class="finding-text">Ансамбль работает только с отбором: наивная склейка убивала precision, а реранкер решает, чьему факту верить.</p></div></li></ol>
+  <p class="bottom-note">Каждая гипотеза проверялась по одной и отбрасывалась с числами — это и вывело на финальный результат</p></div>
+  <footer class="slide-footer"><span class="slide-footer__source">Итоги трёх дней работы над кейсом</span><span class="page-number"></span></footer>
+</section></div>
+
+<!-- 10 · ФИНАЛ -->
+<div class="slide-shell" data-name="Финал" hidden><section class="slide section-slide" data-master="section">
+  <header class="topline"><div class="brand"><img src="mws-mark.svg" alt="MWS">MWS Cloud Platform</div><span class="master-label">Завершение</span></header>
+  <div class="section-content"><p class="section-index">Итог</p><h2 class="section-title">Компактная модель —<br>не хуже большой LLM</h2><p class="section-sub">1,3 млрд параметров против 743 млрд у бейзлайна · F1 0,652 против 0,356 на val · в разы дешевле на каждом звонке · Вопросы?</p></div>
+  <footer class="slide-footer"><span class="slide-footer__source">Команда CompactFactExtraction · MTS MWS · Innopolis Global Hack · 13–16 ноября 2026</span><span class="page-number"></span></footer>
+</section></div>
+
+</main>
+<div class="toast" id="toast" role="status"></div>
+<script src="data.js"></script><script src="charts.js"></script><script src="deck.js"></script>
+</body></html>
