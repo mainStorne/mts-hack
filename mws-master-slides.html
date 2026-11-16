@@ -132,7 +132,7 @@
 pre.code{margin:0;background:var(--soft);border-radius:10px;padding:16px 22px;font:500 17px/25px var(--compact);white-space:pre-wrap;color:var(--ink)}
 .two-col{display:grid;grid-template-columns:1.15fr 1fr;gap:40px;flex:1;min-height:0;align-items:start}
 .note-small{font:400 18px/26px var(--body);color:var(--muted)}
-.mini{width:100%;border-collapse:collapse;font:400 20px/28px var(--body);font-variant-numeric:tabular-nums}
+.mini.tight th,.mini.tight td{padding:5px 10px;font-size:17px;line-height:23px;white-space:nowrap}.mini{width:100%;border-collapse:collapse;font:400 20px/28px var(--body);font-variant-numeric:tabular-nums}
 .mini th,.mini td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line)}.mini th{background:var(--soft);font:500 18px/26px var(--compact)}
 .mini td:first-child{font-weight:500}.mini b{font-weight:700}.mini small{color:var(--muted);font-size:16px}
 .kpi-row{display:flex;gap:18px;flex-wrap:wrap}.kpi{background:var(--soft);border-radius:10px;padding:10px 18px;font:500 21px/28px var(--compact)}.kpi span{display:block;font:400 15px/20px var(--body);color:var(--muted)}
@@ -164,7 +164,7 @@ pre.code{margin:0;background:var(--soft);border-radius:10px;padding:16px 22px;fo
   <header class="topline"><p class="eyebrow">Зачем это нужно</p><span class="master-label">01 / Проблема</span></header>
 
   <div class="slide-body results-layout"><div class="hero-statement"><p class="hero-statement__text">Компактная модель сокращает расходы <span>в 9–90 раз</span></p></div><ol class="findings"><li><span class="finding-number">01</span><div><h3 class="finding-title">Писать заявку вручную дорого</h3><p class="finding-text">После разговора с клиентом оператор сам составляет заявку — процесс удлиняется на каждом обращении.</p></div></li><li><span class="finding-number">02</span><div><h3 class="finding-title">Больше звонков - дороже обработка</h3><p class="finding-text">Колоссальные затраты человеко-часов</p></div></li><li><span class="finding-number">03</span><div><h3 class="finding-title">LLM справляется — но дорого</h3><p class="finding-text">Приемлемое качество за неоправданную цену</p></div></li></ol></div>
-  <footer class="slide-footer"><span class="slide-footer__source">Оценка = цена звонка у LLM-провайдера ÷ цена нашего звонка. Измерено: наш звонок — 2,7 GPU-секунды на V100, около 235 выходных токенов. Диапазон 9–90× — оценка команды по тарифам контакт-центров и прайсам LLM-провайдеров (разброс цен), не измерение.</span><span class="page-number"></span></footer>
+  <footer class="slide-footer"><span class="slide-footer__source">Оценка = цена звонка у LLM-провайдера ÷ цена нашего звонка. GLM-5.3: 744 млрд параметров (753 с MTP-слоем), ≈40 млрд активных на токен (карточка модели Amazon Bedrock); наша модель — 1,29 млрд: в 576 раз меньше по всем параметрам, в 31 раз — по активным. Измерено: наш звонок — 2,7 GPU-секунды на V100, около 235 выходных токенов. Диапазон 9–90× — оценка команды по тарифам контакт-центров и прайсам LLM-провайдеров, не измерение.</span><span class="page-number"></span></footer>
 </section></div>
 
 <!-- 04 · ДЕНЬ 1 -->
@@ -331,7 +331,7 @@ python cfe/ensemble.py cv
 <tr><td>p40</td><td>0,746</td><td>0,469</td><td><b>0,576</b></td><td>0,509</td><td>0,508</td><td>0,691</td></tr>
 <tr><td>p60</td><td>0,771</td><td>0,406</td><td><b>0,532</b></td><td>0,633</td><td>0,508</td><td>0,702</td></tr>
 </tbody></table>
-<p class="note-small" style="margin-top:10px"><b>val</b> — данные без дополнительного шума (в них уже ASR-шум организаторов); <b>p20 / p40 / p60</b> — тот же val с добавленным ASR-шумом 0,20 / 0,40 / 0,60. Выборка — первые 40 звонков val, поэтому F1 val здесь 0,652, а не 0,642 (OOF на всех 383).</p>
+<p class="note-small" style="margin-top:10px"><b>val</b> — данные без дополнительного шума (в них уже ASR-шум организаторов); <b>p20 / p40 / p60</b> — тот же val с добавленным ASR-шумом 0,20 / 0,40 / 0,60. Это собственная симуляция шума (cfe/asr_noise.py), а не скрытый adversarial-тест организаторов. Выборка — первые 40 звонков val, поэтому F1 val здесь 0,652, а не 0,642 (OOF на всех 383).</p>
 </div>
 <div>
 <h4>Recall по типам фактов</h4>
@@ -344,7 +344,7 @@ python cfe/ensemble.py cv
 </tbody></table>
 </div></div>
 <p class="bottom-note" style="font-size:22px;line-height:32px">Потеря F1 к val: −0,031 / −0,077 / −0,121. Precision держится на 0,75–0,77, падает полнота: 0,58 → 0,41. Шаблонные статусы заявок устойчивы; значения тарифа и состояния теряются первыми. Схема корректна на всех срезах (0 нарушений).</p></div>
-  <footer class="slide-footer"><span class="slide-footer__source">Ансамбль ens-v3 на CPU, первые 40 звонков val; grounding_span на шумных срезах не считается — шум не пересчитывает gold-спаны</span><span class="page-number"></span></footer>
+  <footer class="slide-footer"><span class="slide-footer__source">Собственная симуляция шума, не скрытый adversarial-тест · ансамбль ens-v3 на CPU, первые 40 звонков val; grounding_span на шумных срезах не считается — шум не пересчитывает gold-спаны</span><span class="page-number"></span></footer>
 </section></div>
 <div class="slide-shell" data-name="Ошибки по типам" hidden><section class="slide" data-master="comparison">
   <header class="topline"><p class="eyebrow">Анализ ошибок</p><span class="master-label">Типы фактов и даты</span></header>
@@ -420,22 +420,44 @@ python cfe/ensemble.py cv
   </div>
 </section></div>
 
-<!-- ПРЕДЛОЖЕНИЯ ПО ДООБУЧЕНИЮ -->
-<div class="slide-shell" data-name="Предложения по дообучению" hidden><section class="slide finetune-slide" data-master="spec">
-  <header class="topline"><p class="eyebrow">Развитие</p><span class="master-label">Дообучение</span></header>
-  <h2 class="slide-title">Предложения по дообучению</h2>
-  <div class="slide-body ft-cols">
-    <div class="ft-col">
-      <h3>Отбор по уверенности</h3>
-      <p>Размечаем новые данные сильной моделькой, если уверенность высокая - берём в дообучение.</p>
+<!-- FLYWHEEL -->
+<div class="slide-shell" data-name="Flywheel" hidden><section class="slide" data-master="comparison">
+  <header class="topline"><p class="eyebrow">Развитие · измерено</p><span class="master-label">Flywheel</span></header>
+  <h2 class="slide-title">Flywheel: авторазметка без ручного труда</h2>
+  <div class="slide-body two-col" style="grid-template-columns:1fr 1.15fr;gap:36px">
+    <div>
+      <ol class="findings" style="gap:16px">
+        <li><span class="finding-number">01</span><div><h3 class="finding-title" style="font-size:24px;line-height:30px">GLiNER и Gemma извлекают независимо</h3><p class="finding-text" style="font-size:19px;line-height:27px">Факт, найденный обеими и прошедший проверки (схема, цитата, тип объекта, реплика, полярность, подтверждение оператора), становится <b>silver</b> — отдельный источник, с gold не смешивается.</p></div></li>
+        <li><span class="finding-number">02</span><div><h3 class="finding-title" style="font-size:24px;line-height:30px">Остальное — в очередь проверки</h3><p class="finding-text" style="font-size:19px;line-height:27px">С причиной (одна модель, нет цитаты, расхождение дат или реплики) и приоритетом — оценкой реранкера.</p></div></li>
+        <li><span class="finding-number">03</span><div><h3 class="finding-title" style="font-size:24px;line-height:30px">Согласие по датам — признак надёжности</h3><p class="finding-text" style="font-size:19px;line-height:27px">Даты совпали у обеих моделей — valid_from верна в 93%; не совпали — в 20%. В обучение идёт только <b>temporal_agreed</b>.</p></div></li>
+      </ol>
+      <div class="kpi-row" style="margin-top:10px;gap:12px">
+        <div class="kpi">701<span>silver-факт на val</span></div>
+        <div class="kpi">88,6%<span>precision авторазметки</span></div>
+        <div class="kpi">2 746<span>записей в очереди</span></div>
+        <div class="kpi">92,8%<span>valid_from при согласии дат</span></div>
+      </div>
     </div>
-    <div class="ft-col">
-      <h3>Самообучение с реранкером как контролёром</h3>
-      <p>Используя оценку логистической регрессии решаем, какие предсказания возвращаются в обучающую выборку, а какие нет.</p>
-      <p class="muted">Дёшево, потому что реранкер уже обучен.</p>
+    <div>
+      <table class="mini tight">
+        <thead><tr><th>группа</th><th>n</th><th>precision</th><th>valid_from</th><th>valid_to</th></tr></thead>
+        <tbody>
+        <tr><td><b>silver</b></td><td>701</td><td><b>0,886</b></td><td>0,388</td><td>0,762</td></tr>
+        <tr><td>· даты согласованы</td><td>231</td><td>0,861</td><td><b>0,928</b></td><td><b>0,964</b></td></tr>
+        <tr><td>· даты спорные</td><td>470</td><td>0,898</td><td>0,201</td><td>0,692</td></tr>
+        <tr><td>очередь: gemma_only</td><td>872</td><td>0,259</td><td>0,682</td><td>0,929</td></tr>
+        <tr><td>очередь: gliner_only</td><td>1&nbsp;100</td><td>0,298</td><td>0,549</td><td>0,809</td></tr>
+        <tr><td>очередь: ungrounded</td><td>584</td><td>0,188</td><td>0,805</td><td>0,915</td></tr>
+        <tr><td>очередь: dates</td><td>662</td><td>0,855</td><td>0,251</td><td>0,749</td></tr>
+        <tr><td>очередь: source_turn</td><td>285</td><td>0,786</td><td>0,592</td><td>0,938</td></tr>
+        <tr><td>очередь: operator_unconfirmed</td><td>40</td><td>0,625</td><td>0,760</td><td>1,000</td></tr>
+        <tr><td><b>верхние 20% очереди по приоритету</b></td><td>549</td><td><b>0,842</b></td><td>0,355</td><td>0,795</td></tr>
+        </tbody></table>
+      <p class="note-small" style="margin-top:8px;font-size:16px;line-height:22px">Факт из одной модели верен в 26–30% случаев; верхние 20% очереди — в 84%: проверяющий начинает с них.</p>
     </div>
   </div>
-  <p class="bottom-note" style="font-size:22px;line-height:32px">Критерий приёмки: рост F1 на OOF val не меньше 0,01 без потери precision и без нарушений схемы. Цена цикла: GLiNER ≈ 1 ч 10 мин, Gemma ≈ 2 ч 15 мин, реранкер ≈ 25 мин на CPU.</p>
+  <p class="bottom-note" style="font-size:18px;line-height:26px">Измерено на val (383 звонка, gold — только для оценки): это качество авто-меток, а не модели, обученной на silver, и не скрытый test. Дальше: silver отдельным источником в дообучение; критерий — F1 OOF +0,01 без потери precision.</p>
+  <footer class="slide-footer"><span class="slide-footer__source">cfe/flywheel.py · реранкер ens-v1 · silver и очередь: ml/runs/flywheel-val</span><span class="page-number"></span></footer>
 </section></div>
 
 <!-- МАСШТАБИРОВАНИЕ · МНОГОЯЗЫЧНОСТЬ -->
@@ -493,7 +515,7 @@ curl -s localhost:8000/extract \
 </section></div>
 <div class="slide-shell" data-name="Финал" hidden><section class="slide section-slide" data-master="section">
   <header class="topline"><div class="brand"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9IjAgMCA0NCA0NCIgY2xhc3M9ImhlYWRlci1ib3R0b21fX2xvZ28iPjxtYXNrIGlkPSJhIiB3aWR0aD0iNDUiIGhlaWdodD0iNDQiIHg9IjAiIHk9IjAiIG1hc2tVbml0cz0idXNlclNwYWNlT25Vc2UiIHN0eWxlPSJtYXNrLXR5cGU6bHVtaW5hbmNlOyI+PHBhdGggZmlsbD0iI2ZmZiIgZD0iTTQ0LjAwMyAwaC00NHY0NGg0NHoiPjwvcGF0aD48L21hc2s+PGcgbWFzaz0idXJsKCNhKSI+PHBhdGggZmlsbD0iI2ZmZiIgZD0iTTQ0IDBIMHY0NGg0My45ODJ6Ij48L3BhdGg+PHBhdGggZmlsbD0iI2ZmMDAzMiIgZD0ibTEzLjQwMiAzLjM5LTMuMjMgNi43MDhMNi45MjcgMy4zOUgzLjM5M3YxMC4xNTJoMi40NzVWNi4yNzhsMy4xNTcgNi4xMzRoMi4yNmwzLjE1Ny02LjEzNHY3LjI2NGgyLjQ3NVYzLjM5ek0zOS4zOTMgMy4zOWwtMS44ODMgNy40OTctMi4xODgtNy40OTdoLTIuOTI0bC0yLjE4OSA3LjQ5Ny0xLjg4My03LjQ5N2gtMi41ODNsMi42MDEgMTAuMTUyaDMuMjY1bDIuMjYtNy42NiAyLjI2IDcuNjZoMy4yNjRMNDEuOTk0IDMuMzl6TTM1LjQzIDM0LjUxMmMtMS42ODctLjEyNi0zLjE0LS4yMzQtMy4xNC0xLjEzIDAtLjk4NyAxLjAwNS0xLjE2NiAyLjcyNy0xLjE2NiAxLjUwNiAwIDIuNTQ3LjE5NyAyLjcyNiAxLjE4M2gyLjg1MmMtLjE5Ny0yLjEzNC0xLjk3My0zLjEyLTUuNTc4LTMuMTJzLTUuNDg5IDEuMDQtNS40ODkgMy4xNzRjMCAyLjY3MyAyLjk2IDIuODg4IDUuMzI3IDMuMDUgMS42ODcuMTI1IDMuMTU3LjIxNSAzLjE1NyAxLjE4MyAwIDEuMDA1LTEuMTMgMS4yMi0yLjg1MiAxLjIyLTIuMjI0IDAtMi43OC0uNDg0LTIuOTYtMS4zODFIMjkuMzVjLjIzMyAyLjM2OCAxLjkxOSAzLjMxOCA1LjgxMSAzLjMxOCAxLjk1NiAwIDMuMzM3LS4yNSA0LjIzNC0uNzcxLjkxNC0uNTM4IDEuMzgtMS4zODEgMS4zOC0yLjU2NSAwLTIuNi0yLjk1OS0yLjgxNi01LjM0NS0yLjk5NSI+PC9wYXRoPjwvZz48cGF0aCBmaWxsPSIjZmYwMDMyIiBkPSJNNDQgNDRIMFYwaDQzLjk4MnpNLjQ4NCA0My41MTZoNDMuMDE0Vi40ODRILjQ4NHoiPjwvcGF0aD48L3N2Zz4=" alt="MWS">MWS Cloud Platform</div><span class="master-label">Завершение</span></header>
-  <div class="section-content"><p class="section-index">Итог</p><h2 class="section-title">Компактная модель —<br>не хуже большой LLM</h2><p class="section-sub">1,3 млрд параметров против 743 млрд у бейзлайна · F1 0,642 (OOF) против 0,356 на val · в разы дешевле на каждом звонке · Вопросы?</p></div>
+  <div class="section-content"><p class="section-index">Итог</p><h2 class="section-title">Компактная модель —<br>не хуже большой LLM</h2><p class="section-sub">1,3 млрд параметров против 744 млрд (≈40 млрд активных) у бейзлайна · F1 0,642 (OOF) против 0,356 на val · в разы дешевле на каждом звонке · Вопросы?</p></div>
   <footer class="slide-footer"><span class="slide-footer__source">Команда one-zero-eight · MTS MWS · Innopolis Global Hack · 13–16 ноября 2026</span><span class="page-number"></span></footer>
 </section></div>
 
