@@ -38,7 +38,7 @@ def main():
     model = AutoModelForCausalLM.from_pretrained(a.gemma_base, torch_dtype=torch.float16)
     model = peft.PeftModel.from_pretrained(model, a.gemma_adapter).merge_and_unload()
     model.save_pretrained(gdir, safe_serialization=True)
-    AutoTokenizer.from_pretrained(a.gemma_adapter).save_pretrained(gdir)
+    AutoTokenizer.from_pretrained(a.gemma_base).save_pretrained(gdir)  # токенайзер базы = токенайзер адаптера (в weights/ его нет)
     gemma_params = sum(p.numel() for p in model.parameters())
 
     from huggingface_hub import snapshot_download
