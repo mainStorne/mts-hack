@@ -1,0 +1,6 @@
+pymorphy3==2.0.6
+pymorphy3-dicts-ru
+scikit-learn==1.9.1
+numpy
+# только для переобучения в Modal:
+# modal[api-proxy-support]
