@@ -1,0 +1,206 @@
+{
+ "w": [
+  -0.7196031555820084,
+  -0.11528651119698863,
+  0.8880932227916691,
+  -0.061954491482319886,
+  0.137945359208368,
+  -1.0248172824827873,
+  -0.3431966383999975,
+  0.257293163163889,
+  -0.20291389996400425,
+  -0.3572281560247072,
+  1.3352787957556287,
+  0.381520009713626,
+  -0.08871186960075444,
+  0.28473597707803905,
+  0.48085380691418433,
+  -0.507444959097044,
+  -0.9641929279198521,
+  0.45129106865252344,
+  0.2225950946333652,
+  -0.3211883748566938,
+  0.10499012117721063,
+  0.19127343237466063,
+  -0.17789239947655,
+  0.4165426619304453,
+  1.22371950166487,
+  -0.3183836952342683,
+  -0.29130783147484934,
+  0.12919442373872056,
+  -0.21958284637797798,
+  0.06875107968440994,
+  -0.5969802986794522,
+  0.11728337778238307,
+  -1.0661822654692135,
+  -0.6164430148032259,
+  -0.3682410168788897,
+  -0.07902449638184585,
+  0.4982025082326683,
+  1.0423569003171267,
+  -0.296789054428938,
+  -0.9478763447354244,
+  0.04593599429265121,
+  -0.5960311680979703,
+  0.29273734430637327,
+  -0.2395296047983671,
+  0.07118083487587643,
+  -0.053798173243026035,
+  -0.14056816466845187,
+  0.3076740735880521,
+  0.23205409137799363,
+  0.03507685884172465,
+  -0.057366804227615455,
+  0.3089499673865367,
+  0.09656081748103458,
+  0.11498166875098952
+ ],
+ "b": -2.4853614452431003,
+ "prm": {
+  "theta": 0.3,
+  "date_src": {
+   "agreement": "gl",
+   "service_state": "ge",
+   "tariff": "ge",
+   "ticket_status": "ge"
+  },
+  "reclose": "none",
+  "snap": "any",
+  "rule_cells": [
+   "agreement|day1",
+   "agreement|thru",
+   "service_state|wd"
+  ],
+  "drop_cells": [
+   "service_state|last"
+  ]
+ },
+ "fold_prm": [
+  {
+   "theta": 0.3,
+   "date_src": {
+    "agreement": "gl",
+    "service_state": "ge",
+    "tariff": "ge",
+    "ticket_status": "ge"
+   },
+   "reclose": "none",
+   "snap": "any",
+   "rule_cells": [
+    "agreement|thru",
+    "service_state|wd"
+   ],
+   "drop_cells": []
+  },
+  {
+   "theta": 0.3,
+   "date_src": {
+    "agreement": "gl",
+    "service_state": "ge",
+    "tariff": "ge",
+    "ticket_status": "ge"
+   },
+   "reclose": "none",
+   "snap": "any",
+   "rule_cells": [
+    "agreement|day1",
+    "agreement|thru",
+    "service_state|wd"
+   ],
+   "drop_cells": [
+    "service_state|last"
+   ]
+  },
+  {
+   "theta": 0.3,
+   "date_src": {
+    "agreement": "gl",
+    "service_state": "gl",
+    "tariff": "ge",
+    "ticket_status": "ge"
+   },
+   "reclose": "none",
+   "snap": "any",
+   "rule_cells": [
+    "agreement|day1",
+    "agreement|thru"
+   ],
+   "drop_cells": [
+    "service_state|last",
+    "service_state|ago"
+   ]
+  },
+  {
+   "theta": 0.3,
+   "date_src": {
+    "agreement": "gl",
+    "service_state": "ge",
+    "tariff": "ge",
+    "ticket_status": "ge"
+   },
+   "reclose": "none",
+   "snap": "any",
+   "rule_cells": [
+    "agreement|thru",
+    "service_state|wd"
+   ],
+   "drop_cells": [
+    "service_state|last"
+   ]
+  },
+  {
+   "theta": 0.4,
+   "date_src": {
+    "agreement": "gl",
+    "service_state": "gl",
+    "tariff": "ge",
+    "ticket_status": "ge"
+   },
+   "reclose": "none",
+   "snap": "any",
+   "rule_cells": [
+    "agreement|day1",
+    "agreement|thru",
+    "service_state|wd"
+   ],
+   "drop_cells": [
+    "service_state|last",
+    "service_state|ago"
+   ]
+  }
+ ],
+ "oof": {
+  "metrics_version": "2.1",
+  "n_calls": 383,
+  "n_gold_facts": 1845,
+  "n_pred_facts": 1355,
+  "fact_precision": 0.7579,
+  "fact_recall": 0.5566,
+  "temporal_recall": 0.4923,
+  "n_temporal": 646,
+  "state_accuracy": 0.5714,
+  "n_state": 623,
+  "grounding_turn": 0.7984,
+  "grounding_span": 0.9761,
+  "n_grounded": 1027,
+  "f1": 0.6418
+ },
+ "in_sample": {
+  "metrics_version": "2.1",
+  "n_calls": 383,
+  "n_gold_facts": 1845,
+  "n_pred_facts": 1381,
+  "fact_precision": 0.7596,
+  "fact_recall": 0.5686,
+  "temporal_recall": 0.5008,
+  "n_temporal": 653,
+  "state_accuracy": 0.6035,
+  "n_state": 623,
+  "grounding_turn": 0.7998,
+  "grounding_span": 0.9762,
+  "n_grounded": 1049,
+  "f1": 0.6504
+ },
+ "gemma": "gemma/runs/gemma-v21-targeted-gen/val_pred.jsonl/lora.jsonl",
+ "raw": "runs/struct-lora-v21/raw_test.jsonl"
+}
