@@ -10,11 +10,11 @@ window.MWS_DATA={
   architecture:{
     frame:{x:355,y:40,w:310,h:432,label:"Параллельные ветки"},
     nodes:[
-      {id:"asr",x:30,y:205,w:205,h:100,title:"ASR-транскрипт",subtitle:"оператор и клиент"},
-      {id:"gliner",x:395,y:85,w:230,h:100,title:"GLiNER2 + LoRA",subtitle:"факты-кандидаты со спанами"},
-      {id:"gemma",x:395,y:330,w:230,h:100,title:"Gemma3 + LoRA",subtitle:"«одиночки» — вне GLiNER"},
-      {id:"lr",x:815,y:205,w:260,h:100,title:"Логистическая регрессия",subtitle:"отбор фактов по признакам",active:true},
-      {id:"out",x:1195,y:205,w:185,h:100,title:"Компактные факты",subtitle:"готовый ответ"}
+      {id:"asr",x:30,y:205,w:205,h:100,title:"ASR-транскрипт"},
+      {id:"gliner",x:395,y:85,w:230,h:100,title:"GLiNER2 + LoRA"},
+      {id:"gemma",x:395,y:330,w:230,h:100,title:"Gemma3 + LoRA"},
+      {id:"lr",x:815,y:205,w:260,h:100,title:"Логистическая регрессия",active:true},
+      {id:"out",x:1195,y:205,w:185,h:100,title:"Факты"}
     ],
     edges:[
       {from:"asr",to:"gliner",label:"реплики"},
