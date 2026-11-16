@@ -1,0 +1,13 @@
+{
+  "comment": "Семьи синтетики для варианта real_plus_targeted: hard negatives и точечные слабости (повисшие предложения, «да» на другой вопрос, передумал, путаница номеров заявок, отвергнутые гипотезы, условные согласия, recap при перезвонке).",
+  "families": [
+    "fam_tariff_offer_dangling",
+    "fam_agr_unanswered",
+    "fam_agr_mind_changed",
+    "fam_agr_conditional",
+    "fam_tkt_wrong_number",
+    "fam_svc_misattribution",
+    "fam_act_tried_many",
+    "fam_followup_recap"
+  ]
+}

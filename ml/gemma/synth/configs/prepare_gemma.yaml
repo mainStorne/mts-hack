@@ -1,0 +1,25 @@
+# Варианты данных для SFT Gemma 3 1B (синтетический пилот).
+# Все три варианта собираются из ОДНИХ реальных данных train; синтетика и
+# аугменты попадают только в sft_train, внутренний eval — только реальные звонки.
+data:
+  train_jsonl: data/raw/train.jsonl
+  synthetic_pilot: data/synthetic_pilot.jsonl
+  synthetic_metadata: data/synthetic_metadata.jsonl
+  augmented_train: data/augmented_train.jsonl   # подход B (только train-источники)
+  targeted_families: configs/targeted_families.json
+  out_root: data
+  # Бюджет промпта: ~4200 символов ≈ 3072 токена Gemma (замер в gemma3_1b).
+  # Точнее — при --tokenizer, тогда обрезка по max_prompt_tokens.
+  max_prompt_chars: 4200
+  max_prompt_tokens: 3072
+  eval_frac: 0.02          # доля РЕАЛЬНЫХ звонков во внутренний eval
+variants:
+  real_only:
+    real: 1.0
+  real_plus_synthetic:
+    real: 1.0
+    synthetic: all         # весь пилот (360)
+  real_plus_targeted:
+    real: 1.0
+    synthetic: targeted    # только hard-negative семьи
+    augmented: 180         # + подход B, чтобы бюджет примеров был как у +synthetic

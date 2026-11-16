@@ -1,3 +1,8 @@
+.venv/
+runs/
+data/
+.env
+models/
 cfe_pipeline/raw/
 !cfe_pipeline/data/
 __pycache__/

@@ -1,0 +1,20 @@
+# CPU-образ CFE (amd64 / arm64), веса внутри. Сборка из ml/ после cfe/export_models.py:
+#   docker buildx build --platform linux/amd64 -f docker/Dockerfile.cpu -t cfe-cpu:1.0-amd64 --load .
+FROM python:3.12-slim
+ARG TARGETARCH
+WORKDIR /app
+RUN if [ "$TARGETARCH" = "amd64" ]; then pip install --no-cache-dir torch==2.14.1 --index-url https://download.pytorch.org/whl/cpu; \
+    else pip install --no-cache-dir torch==2.14.1; fi
+COPY docker/requirements.txt docker/requirements.txt
+RUN pip install --no-cache-dir -r docker/requirements.txt
+COPY gemma/codec.py gemma/predict.py gemma/prepare_dataset.py gemma/
+COPY data data
+COPY models models
+COPY cfe cfe
+RUN useradd -u 1000 -m app && chown -R app /app
+USER app
+ENV HF_HOME=/app/models/hf HF_HUB_OFFLINE=1 CFE_GLINER_BASE=/app/models/hf/hub/models--fastino--gliner2.5-multi-v1/snapshots/7b005274e82da37dcf1f5fd9d6a2ef413c6a004c CFE_DEVICE=cpu CFE_MODEL=/app/models/gliner-lora \
+    CFE_PARAMS=/app/models/gliner-params.json CFE_ENSEMBLE=/app/models/ensemble-params.json \
+    CFE_GEMMA_MODEL=/app/models/gemma-merged CFE_GEMMA_BATCH=4 CFE_GEMMA_MAX_PROMPT=3072 CFE_GEMMA_MAX_NEW=1024
+EXPOSE 8000
+CMD ["uvicorn", "cfe.api:app", "--host", "0.0.0.0", "--port", "8000"]

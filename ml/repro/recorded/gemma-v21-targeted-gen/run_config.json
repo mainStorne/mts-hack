@@ -1,0 +1,30 @@
+{
+  "model": "/opt/mts_hack/shared/mts_experiments/gemma3_1b/models/gemma-3-1b-it",
+  "seed": 42,
+  "epochs": 3,
+  "lr": 0.0002,
+  "batch_size": 4,
+  "grad_accum": 4,
+  "max_length": 4096,
+  "max_steps": -1,
+  "lora_r": 16,
+  "lora_alpha": 32,
+  "target_modules": "all-linear",
+  "warmup_ratio": 0.05,
+  "warmup_steps": 50,
+  "total_steps": 1011,
+  "completion_only_loss": true,
+  "torch_dtype": "float16",
+  "attn": "sdpa",
+  "trainable_params": 13045760,
+  "total_params": 1012931712,
+  "loss_mask": {
+    "masked_prompt_tokens": 4564,
+    "trained_completion_tokens": 776,
+    "completion_ratio": 0.1453,
+    "completion_is_target_json": true
+  },
+  "train_file": "data/targeted_gen_v21_ctx3k/sft_train.jsonl",
+  "n_train": 5402,
+  "smoke": false
+}

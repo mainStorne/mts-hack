@@ -1,0 +1,49 @@
+# Конфигурация эксперимента: Gemma 3 1B + LoRA для кейса МТС CompactFactExtraction
+#
+# Все пути относительно корня проекта (~/mts_experiments/gemma3_1b), если не указано иное.
+
+model:
+  name: /opt/mts_hack/shared/mts_experiments/gemma3_1b/models/gemma-3-1b-it
+  # V100 — архитектура Volta (sm_70): bf16 не поддерживается нативно (эмуляция, медленно).
+  # flash_attention_2 недоступен. Используем fp16 + sdpa — как в проверенном sft/train.py команды.
+  torch_dtype: float16
+  attn_implementation: sdpa
+
+data:
+  train_jsonl: data/raw/train.jsonl   # только для обучения
+  val_jsonl: data/raw/val.jsonl       # только для оценки
+  out_dir: data
+  # Ограничение промпта. Замерено на train.jsonl токенайзером Gemma:
+  #   без ограничения промпт доходил до 8346 токенов (русский ASR-текст
+  #   токенизуется в ~1.4 токена на символ, поэтому символьная обрезка не помогает);
+  #   с лимитом 3072 токенов теряется 0.19% фактов, ещё 27 примеров отброшены,
+  #   т.к. их целевой JSON ссылался на невидимые реплики.
+  max_prompt_tokens: 3072
+  # Доля звонков из train.jsonl во внутренний eval (только для мониторинга loss).
+  # Разделение по account_id, чтобы звонки одного клиента не попадали в оба сплита.
+  eval_frac: 0.02
+
+lora:
+  r: 16
+  alpha: 32
+  dropout: 0.05
+  target_modules: all-linear   # для Gemma это q,k,v,o,gate,up,down_proj
+
+train:
+  output_dir: adapters/gemma3-1b-lora
+  epochs: 3
+  lr: 2.0e-4
+  batch_size: 4                # per_device; V100 32GB, но GPU общий с командой
+  grad_accum: 4                # эффективный batch = 16
+  max_length: 4096             # промпт (max 3072) + ответ (max 483) + запас
+  warmup_ratio: 0.05
+  seed: 42
+  logging_steps: 10
+  gradient_checkpointing: true
+  packing: false               # упаковка ломает границы примеров и усложняет отладку
+  completion_only_loss: true   # МАСКИРОВАНИЕ: loss только на целевом JSON, не на промпте
+
+infer:
+  max_new_tokens: 1024         # целевой JSON: mean 577 символов, max 1247
+  batch_size: 8
+  temperature: 0.0             # жадное декодирование для воспроизводимости

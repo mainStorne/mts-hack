@@ -1,0 +1,25 @@
+# GPU-образ CFE: GLiNER в процессе (torch 2.14.1+cu126), Gemma на встроенном сервере vLLM (CFE_GEMMA_BACKEND=vllm) или в процессе (hf).
+#   V100:           docker build -f docker/Dockerfile.gpu --build-arg VLLM_DTYPE_DEFAULT=half --build-arg VLLM_FP16_GEMMA_DEFAULT=1 -t cfe-gpu:1.0-v100 .
+#   обычный GPU:    docker build -f docker/Dockerfile.gpu --build-arg VLLM_BASE=vllm/vllm-openai:latest --build-arg VLLM_EXTRA_DEFAULT="" --build-arg VLLM_PYTHON=python3 -t cfe-gpu:1.0 .
+ARG VLLM_BASE=xzwgx/v100-vllm:1.5.1
+# V100: --build-arg VLLM_DTYPE_DEFAULT=half --build-arg VLLM_FP16_GEMMA_DEFAULT=1 (см. entrypoint-gpu.sh)
+FROM ${VLLM_BASE}
+ARG VLLM_EXTRA_DEFAULT="--attention-backend FLASH_ATTN_V100"
+ARG VLLM_DTYPE_DEFAULT="bfloat16"
+ARG VLLM_FP16_GEMMA_DEFAULT="0"
+ARG VLLM_PYTHON=/opt/vllm/bin/python
+WORKDIR /app
+RUN ${VLLM_PYTHON} -m pip install --no-cache-dir uv || ${VLLM_PYTHON} -m pip install --no-cache-dir --break-system-packages uv
+COPY pyproject.toml uv.lock ./
+RUN UV_PROJECT_ENVIRONMENT=/app/.venv uv sync --frozen --no-dev --python ${VLLM_PYTHON}
+COPY gemma/codec.py gemma/predict.py gemma/prepare_dataset.py gemma/
+COPY docker/entrypoint-gpu.sh docker/entrypoint-gpu.sh
+COPY data data
+COPY models models
+COPY cfe cfe
+ENV HF_HOME=/app/models/hf HF_HUB_OFFLINE=1 CFE_GLINER_BASE=/app/models/hf/hub/models--fastino--gliner2.5-multi-v1/snapshots/7b005274e82da37dcf1f5fd9d6a2ef413c6a004c CFE_DEVICE=cuda CFE_GEMMA_BACKEND=vllm CFE_GEMMA_BATCH=16 \
+    CFE_MODEL=/app/models/gliner-lora CFE_PARAMS=/app/models/gliner-params.json CFE_ENSEMBLE=/app/models/ensemble-params.json \
+    CFE_GEMMA_MODEL=/app/models/gemma-merged CFE_GEMMA_MAX_PROMPT=3072 CFE_GEMMA_MAX_NEW=1024 \
+    VLLM_GPU_FRAC=0.35 VLLM_EXTRA=${VLLM_EXTRA_DEFAULT} VLLM_DTYPE=${VLLM_DTYPE_DEFAULT} VLLM_FP16_GEMMA=${VLLM_FP16_GEMMA_DEFAULT} VLLM_PYTHON=${VLLM_PYTHON}
+EXPOSE 8000
+ENTRYPOINT ["/app/docker/entrypoint-gpu.sh"]

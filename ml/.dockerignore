@@ -1,0 +1,17 @@
+.venv
+runs
+data/*
+!data/raw
+data/raw/*
+!data/raw/catalog.json
+!data/raw/baseline_metrics.json
+!data/clf_labels.json
+!data/date_model.json
+**/__pycache__
+gemma/runs
+gemma/synth
+gemma/adapters
+gemma/data
+gemma/.venv
+sft
+models/hf/hub/**/.no_exist
