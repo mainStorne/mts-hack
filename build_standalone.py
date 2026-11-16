@@ -11,9 +11,11 @@ css=re.sub(r'url\((fonts/[^)]+)\)',font,css)
 html=html.replace('<link rel="stylesheet" href="masters.css">','<style>\n'+css+'\n</style>')
 logo='data:image/svg+xml;base64,'+base64.b64encode((root/'mws-mark.svg').read_bytes()).decode()
 html=html.replace('src="mws-mark.svg"','src="'+logo+'"')
+chart='data:image/svg+xml;base64,'+base64.b64encode((root/'resources-quality.svg').read_bytes()).decode()
+html=html.replace('src="resources-quality.svg"','src="'+chart+'"')
 for name in ['data.js','charts.js','deck.js']:
     js=(root/name).read_text().replace('</script','<\\/script')
     html=html.replace('<script src="'+name+'"></script>','<script>\n'+js+'\n</script>')
-out=root.parent/'mws-master-slides.html'
+out=root/'mws-master-slides.html'
 out.write_text(html)
 print(out)
