@@ -90,7 +90,7 @@
 pre.code{margin:0;background:var(--soft);border-radius:10px;padding:16px 22px;font:500 17px/25px var(--compact);white-space:pre-wrap;color:var(--ink)}
 .two-col{display:grid;grid-template-columns:1.15fr 1fr;gap:40px;flex:1;min-height:0;align-items:start}
 .note-small{font:400 18px/26px var(--body);color:var(--muted)}
-.mini.tight th,.mini.tight td{padding:5px 10px;font-size:17px;line-height:23px;white-space:nowrap}.mini{width:100%;border-collapse:collapse;font:400 20px/28px var(--body);font-variant-numeric:tabular-nums}
+.mini.tight th,.mini.tight td{padding:5px 10px;font-size:17px;line-height:23px;white-space:nowrap}.mini.tight.wrap th,.mini.tight.wrap td{white-space:normal;padding:7px 10px}.mini{width:100%;border-collapse:collapse;font:400 20px/28px var(--body);font-variant-numeric:tabular-nums}
 .mini th,.mini td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line)}.mini th{background:var(--soft);font:500 18px/26px var(--compact)}
 .mini td:first-child{font-weight:500}.mini b{font-weight:700}.mini small{color:var(--muted);font-size:16px}
 .kpi-row{display:flex;gap:18px;flex-wrap:wrap}.kpi{background:var(--soft);border-radius:10px;padding:10px 18px;font:500 21px/28px var(--compact)}.kpi span{display:block;font:400 15px/20px var(--body);color:var(--muted)}
@@ -276,24 +276,25 @@ python cfe/ensemble.py cv
 
 <!-- МАСШТАБИРОВАНИЕ -->
 <div class="slide-shell" data-name="Замеры ресурсов" hidden><section class="slide" data-master="comparison">
-  <header class="topline"><p class="eyebrow">Ресурсы</p><span class="master-label">Задержка и память</span></header>
+  <header class="topline"><p class="eyebrow">Единая методика замеров</p><span class="master-label">Задержка и память</span></header>
   <h2 class="slide-title">Замеры: латентность и память на V100 и CPU</h2>
-  <div class="slide-body"><table class="mini">
-<thead><tr><th>конфигурация (ансамбль, 1,29 млрд)</th><th>выборка</th><th>с / звонок</th><th>GPU-с / звонок</th><th>память</th></tr></thead>
+  <div class="slide-body"><table class="mini tight wrap">
+<thead><tr><th>конфигурация</th><th>выборка</th><th>с / звонок</th><th>GPU-с / звонок</th><th>память</th></tr></thead>
 <tbody>
-<tr><td>V100 · HF · батч 16</td><td>val, 383</td><td>2,90</td><td>2,65 <small>(GLiNER 0,97 + Gemma 1,68)</small></td><td>VRAM 8,8 ГБ · RSS 3,7 ГБ</td></tr>
-<tr><td>V100 · HF · батч 1</td><td>5 звонков</td><td>14,9 <small>(p50 14,1 · p95 17,9)</small></td><td>14,6 <small>(1,6 + 13,0)</small></td><td>VRAM 5,4 ГБ · RSS 3,6 ГБ</td></tr>
-<tr><td><b>V100 · vLLM · батч 1</b> <small>(образ cfe-gpu:1.0-v100)</small></td><td>5 звонков</td><td><b>2,66</b> <small>(p50 2,34 · p95 4,11)</small></td><td><b>2,30</b> <small>(0,86 + 1,43)</small></td><td>VRAM 3,3 ГБ + vLLM, всего 16,6 ГБ · RSS 3,2 ГБ</td></tr>
-<tr><td>CPU · 16 ядер</td><td>5 звонков</td><td>36,8 <small>(p50 29,8 · p95 66,6)</small></td><td>—</td><td>RSS 8,85 ГБ</td></tr>
-<tr><td>CPU · 8 ядер</td><td>40 звонков</td><td>102 <small>(p50 89 · p95 244)</small></td><td>—</td><td>RSS 9,2 ГБ</td></tr>
+<tr><td>GLiNER · V100 · батч 16</td><td>val, 383</td><td>1,1</td><td>1,0</td><td>VRAM 6,7 ГБ · RSS 3,2 ГБ</td></tr>
+<tr><td>Gemma · V100 · HF · батч 16</td><td>val, 383</td><td>2,07</td><td>2,07 <small>(230 токенов)</small></td><td>VRAM 6,3 ГБ · RSS 3,0 ГБ</td></tr>
+<tr><td>Ансамбль · V100 · HF · батч 16</td><td>val, 383</td><td>2,90</td><td>2,65 <small>(GLiNER 0,97 + Gemma 1,68)</small></td><td>VRAM 8,8 ГБ · RSS 3,7 ГБ</td></tr>
+<tr><td>Ансамбль · V100 · HF · батч 1</td><td>5 звонков</td><td>14,9 <small>(p50 14,1 · p95 17,9)</small></td><td>14,6 <small>(1,6 + 13,0)</small></td><td>VRAM 5,4 ГБ · RSS 3,6 ГБ</td></tr>
+<tr><td><b>Ансамбль · V100 · vLLM · батч 1</b> <small>(образ cfe-gpu:1.0-v100)</small></td><td>5 звонков</td><td><b>2,66</b> <small>(p50 2,34 · p95 4,11)</small></td><td><b>2,30</b> <small>(0,86 + 1,43)</small></td><td>VRAM 3,3 ГБ + vLLM, всего 16,6 ГБ · RSS 3,2 ГБ</td></tr>
+<tr><td>Ансамбль · CPU 16 ядер</td><td>5 звонков</td><td>36,8 <small>(p50 29,8 · p95 66,6)</small></td><td>—</td><td>RSS 8,85 ГБ</td></tr>
+<tr><td>Ансамбль · CPU 8 ядер</td><td>40 звонков</td><td>102 <small>(p50 89 · p95 244)</small></td><td>—</td><td>RSS 9,2 ГБ</td></tr>
 </tbody></table>
 <div class="kpi-row">
 <div class="kpi">235<span>токенов генерирует Gemma на звонок — она задаёт время</span></div>
 <div class="kpi">5,6×<span>vLLM быстрее HF при батче 1 (одни и те же 5 звонков)</span></div>
 <div class="kpi">0<span>нарушений схемы во всех прогонах</span></div>
-<div class="kpi">2,05 ГБ<span>веса на диске (fp16)</span></div>
 </div>
-<p class="note-small">Выборка vLLM мала (5 звонков): это замер задержки, а не пропускной способности; HF-замер батча 16 сделан на полном val. Память vLLM в 16,6 ГБ — в основном резерв 35% GPU под KV-кэш; сервер общий, секунды завышены.</p></div>
+<p class="note-small" style="font-size:16px;line-height:22px">Выборка vLLM мала (5 звонков): это замер задержки; HF-замер на полном val. 16,6 ГБ у vLLM — в основном резерв 35% GPU под KV-кэш. Сервер общий, секунды завышены.</p></div>
   <footer class="slide-footer"><span class="slide-footer__source">1× Tesla V100 32 ГБ, Xeon E5-2698 v4 · cfe/bench.py: прогрев исключён, загрузка моделей не входит; GPU-секунды = время между synchronize() вокруг GLiNER и генерации Gemma</span><span class="page-number"></span></footer>
 </section></div>
 <div class="slide-shell" data-name="Устойчивость к шуму" hidden><section class="slide" data-master="comparison">
@@ -308,7 +309,7 @@ python cfe/ensemble.py cv
 <tr><td>p40</td><td>0,746</td><td>0,469</td><td><b>0,576</b></td><td>0,509</td><td>0,508</td><td>0,691</td></tr>
 <tr><td>p60</td><td>0,771</td><td>0,406</td><td><b>0,532</b></td><td>0,633</td><td>0,508</td><td>0,702</td></tr>
 </tbody></table>
-<p class="note-small" style="margin-top:10px"><b>val</b> — данные без дополнительного шума (в них уже ASR-шум организаторов); <b>p20 / p40 / p60</b> — тот же val с добавленным ASR-шумом 0,20 / 0,40 / 0,60. Это собственная симуляция шума (cfe/asr_noise.py), а не скрытый adversarial-тест организаторов. Выборка — первые 40 звонков val, поэтому F1 val здесь 0,652, а не 0,642 (OOF на всех 383).</p>
+<p class="note-small" style="margin-top:8px;font-size:16px;line-height:22px"><b>val</b> — без добавленного шума (в нём уже ASR-шум организаторов); <b>p20 / p40 / p60</b> — тот же val + шум 0,20 / 0,40 / 0,60. Собственная симуляция (cfe/asr_noise.py), не скрытый adversarial-тест. Первые 40 звонков: F1 val 0,652, а не 0,642 (OOF, все 383).</p>
 </div>
 <div>
 <h4>Recall по типам фактов</h4>
@@ -320,7 +321,11 @@ python cfe/ensemble.py cv
 <tr><td>agreement</td><td>0,33</td><td>0,33</td><td>0,32</td><td>0,19</td></tr>
 </tbody></table>
 </div></div>
-<p class="bottom-note" style="font-size:22px;line-height:32px">Потеря F1 к val: −0,031 / −0,077 / −0,121. Precision держится на 0,75–0,77, падает полнота: 0,58 → 0,41. Шаблонные статусы заявок устойчивы; значения тарифа и состояния теряются первыми. Схема корректна на всех срезах (0 нарушений).</p></div>
+<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:6px">
+<div class="ex-card"><h3>Точность не страдает</h3><p>Precision 0,75–0,77 на всех срезах: модель реже угадывает, но реже ошибается. Теряется полнота: 0,580 → 0,406. F1 к val: −0,031 (p20), −0,077 (p40), −0,121 (p60).</p></div>
+<div class="ex-card"><h3>Что страдает больше всего</h3><p>service_state и tariff: значение приходится распознавать по испорченным словам. Меньше всех — ticket_status (шаблонные формулировки).</p></div>
+<div class="ex-card"><h3>temporal и state — мало данных</h3><p>На зашумлённых срезах датируемых фактов мало, различия не значимы; фактов состояния всего 67. Эти числа не читаем как тренд.</p></div>
+</div></div>
   <footer class="slide-footer"><span class="slide-footer__source">Собственная симуляция шума, не скрытый adversarial-тест · ансамбль ens-v3 на CPU, первые 40 звонков val; grounding_span на шумных срезах не считается — шум не пересчитывает gold-спаны</span><span class="page-number"></span></footer>
 </section></div>
 <div class="slide-shell" data-name="Ошибки по типам" hidden><section class="slide" data-master="comparison">
@@ -435,6 +440,32 @@ python cfe/ensemble.py cv
   </div>
   <p class="bottom-note" style="font-size:18px;line-height:26px">Измерено на val (383 звонка, gold — только для оценки): это качество авто-меток, а не модели, обученной на silver, и не скрытый test. Дальше: silver отдельным источником в дообучение; критерий — F1 OOF +0,01 без потери precision.</p>
   <footer class="slide-footer"><span class="slide-footer__source">cfe/flywheel.py · реранкер ens-v1 · silver и очередь: ml/runs/flywheel-val</span><span class="page-number"></span></footer>
+</section></div>
+
+<!-- НОВЫЙ АТРИБУТ -->
+<div class="slide-shell" data-name="Новый атрибут" hidden><section class="slide train-slide" data-master="spec">
+  <header class="topline"><p class="eyebrow">Развитие</p><span class="master-label">Новый атрибут</span></header>
+  <h2 class="slide-title">При появлении нового атрибута</h2>
+  <p class="train-lead">Тип факта зашит в схеме, промптах и признаках реранкера, поэтому это переобучение, а не правка конфига.</p>
+  <div class="slide-body train-cols" style="grid-template-columns:1fr 1fr">
+    <div class="train-col">
+      <h3>Что нужно</h3>
+      <ul>
+        <li><b>Уточнить у организаторов</b>, как скрытый test считает неизвестный атрибут: без gold он даст только лишние факты.</li>
+        <li><b>Примеры нового типа:</b> размеченные (gold) или сгенерированные LLM с проверкой; без них модель тип не выучит. Нужны и звонки без него.</li>
+        <li><b>Правки в коде</b> везде, где перечислены атрибуты: схема GLiNER, кодеки Gemma, сборка SFT, метрики, признаки реранкера, API и валидатор.</li>
+      </ul>
+    </div>
+    <div class="train-col">
+      <h3>Переобучение и проверка</h3>
+      <ul>
+        <li>GLiNER ≈ 1 ч 10 мин, Gemma ≈ 2 ч 15 мин (V100), реранкер ≈ 25 мин на CPU; старые веса реранкера несовместимы (меняется число признаков).</li>
+        <li><b>Проверка:</b> 0 нарушений схемы; пять метрик старых типов на val и шумных срезах не хуже прежних больше чем на 0,005; precision и recall нового типа отдельно.</li>
+        <li class="muted">Дешёвый вариант: добавить тип только в GLiNER и реранкер, без Gemma. Подходит для коротких значений из каталога, не для свободных формулировок.</li>
+      </ul>
+    </div>
+  </div>
+  <footer class="slide-footer"><span class="slide-footer__source">Подробный порядок и список файлов: ml/docs/RESOURCES_QUALITY.md, раздел «Как добавить новый тип факта»</span><span class="page-number"></span></footer>
 </section></div>
 
 <!-- МАСШТАБИРОВАНИЕ · МНОГОЯЗЫЧНОСТЬ -->
