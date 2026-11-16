@@ -36,8 +36,8 @@ def errors_section(pts, data):
     cm.load_catalog(gold_path)
     gold = R.read_jsonl(gold_path)
     show = []
-    for p in (REF, "ens-cpu-t8", "gliner", "gemma-b16"):
-        if p and p in data and p not in show:
+    for p in pts:
+        if p not in show and any(os.path.exists(f"{ROOT[0]}/{p}/{x}/pred.jsonl") for x in SLICES):
             show.append(p)
     out = ["## Разбор ошибок по типам фактов", "",
            "FN = пропущено (n_gold − matched), FP = лишние (n_pred − matched); temporal — доля верных дат среди сопоставленных с восстановимой датой; "
