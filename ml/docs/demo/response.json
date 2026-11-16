@@ -1,0 +1,65 @@
+{
+ "call_id": "u2027_00005:call0000",
+ "facts": [
+  {
+   "object": {
+    "type": "device",
+    "name": "сплиттер"
+   },
+   "attribute": "service_state",
+   "value": "слабый сигнал вай-фай",
+   "polarity": 1,
+   "speaker": "client",
+   "valid_from": "2026-06-26T00:00:00",
+   "valid_to": null,
+   "source": {
+    "turn_idx": 1,
+    "span": [
+     162,
+     183
+    ],
+    "quote": "слабый сигнал вай-фэй"
+   }
+  },
+  {
+   "object": {
+    "type": "client",
+    "name": "Анастасия Валерьевна Прохорова"
+   },
+   "attribute": "action",
+   "value": "проверка скорости по кабелю — не помогло",
+   "polarity": 1,
+   "speaker": "client",
+   "valid_from": "2026-06-27T16:00:00",
+   "valid_to": null,
+   "source": {
+    "turn_idx": 5,
+    "span": [
+     58,
+     90
+    ],
+    "quote": "проверяла по капелю — не помогло"
+   }
+  },
+  {
+   "object": {
+    "type": "client",
+    "name": "Анастасия Валерьевна Прохорова"
+   },
+   "attribute": "agreement",
+   "value": "перенастройка приставки удалённо",
+   "polarity": 1,
+   "speaker": "operator",
+   "valid_from": "2026-06-30T00:00:00",
+   "valid_to": null,
+   "source": {
+    "turn_idx": 10,
+    "span": [
+     25,
+     57
+    ],
+    "quote": "перенастройка приставки удалённо"
+   }
+  }
+ ]
+}
